@@ -20,6 +20,8 @@ public class SQLiteConnection {
         this.inUsing = inUsing;
         if (inUsing) {
             this.beginUsingTime = System.currentTimeMillis();
+        } else {
+            this.beginUsingTime = 0;
         }
     }
 
@@ -43,12 +45,8 @@ public class SQLiteConnection {
         return beginUsingTime;
     }
 
-    public  void  destroy(){
+    public void destroy() {
 
-    }
-
-    public void setBeginUsingTime(long beginUsingTime) {
-        this.beginUsingTime = beginUsingTime;
     }
 
     public SQLiteDatabase getSqLiteDatabase() {
@@ -58,21 +56,24 @@ public class SQLiteConnection {
     public void setSqLiteDatabase(SQLiteDatabase sqLiteDatabase) {
         this.sqLiteDatabase = sqLiteDatabase;
     }
-    public static SQLiteConnection createReadableConnection(String path, int index) {
+
+    public static SQLiteConnection createReadableConnection(String dbPath, int index) {
         SQLiteConnection readableConnection = new SQLiteConnection();
         readableConnection.setInUsing(false);
         readableConnection.setWritable(false);
         readableConnection.setIndex(index);
+        readableConnection.setSqLiteDatabase(SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY & SQLiteDatabase.CREATE_IF_NECESSARY));
         return readableConnection;
     }
 
     ;
 
-    public static SQLiteConnection createWritableConnection(String path, int index) {
+    public static SQLiteConnection createWritableConnection(String dbPath, int index) {
         SQLiteConnection writableConnection = new SQLiteConnection();
         writableConnection.setInUsing(false);
         writableConnection.setWritable(true);
         writableConnection.setIndex(index);
+        writableConnection.setSqLiteDatabase(SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE & SQLiteDatabase.CREATE_IF_NECESSARY));
         return writableConnection;
     }
 

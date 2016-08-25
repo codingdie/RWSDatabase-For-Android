@@ -5,12 +5,10 @@ import java.io.File;
 /**
  * Created by xupen on 2016/8/22.
  */
-public class SQLiteConnectionPoolConfig {
+public class InitSQLiteConnectionPoolConfig {
     private int  maxCount;
     private String dbPath;
 
-    //TODO
-    private int  initCount;
 
     public int getMaxCount() {
         return maxCount;
@@ -20,14 +18,6 @@ public class SQLiteConnectionPoolConfig {
         this.maxCount = maxCount;
     }
 
-    public int getInitCount() {
-        return initCount;
-    }
-
-    public void setInitCount(int initCount) {
-        this.initCount = initCount;
-    }
-
     public String getDbPath() {
         return dbPath;
     }
@@ -35,4 +25,5 @@ public class SQLiteConnectionPoolConfig {
     public void setDbPath(String dbPath) {
         this.dbPath = dbPath;
     }
+
 }

@@ -1,8 +1,8 @@
 package com.codingdie.rwsdatabase.connection;
 
-import com.codingdie.rwsdatabase.connection.Imp.ConnectionPoolManagerImp;
+import com.codingdie.rwsdatabase.connection.Imp.SQLConnectionPoolManagerImp;
 import com.codingdie.rwsdatabase.connection.Imp.InitSQLiteDatabaseImp;
-import com.codingdie.rwsdatabase.connection.model.SQLiteConnectionPoolConfig;
+import com.codingdie.rwsdatabase.connection.model.InitSQLiteConnectionPoolConfig;
 import com.codingdie.rwsdatabase.connection.model.SQLiteConnection;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by xupen on 2016/8/22.
  */
-public class ConnectionPoolManager implements ConnectionPoolManagerImp {
+public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
     private List<SQLiteConnection> readConnectionsPool;
     private SQLiteConnection writeConnection;
     private ReentrantLock versionControlLock = new ReentrantLock(true);
@@ -175,7 +175,7 @@ public class ConnectionPoolManager implements ConnectionPoolManagerImp {
 
 
     @Override
-    public void initConnnectionPool(SQLiteConnectionPoolConfig connectionPoolConfig, InitSQLiteDatabaseImp initSQLiteDatabaseImp) {
+    public void initConnnectionPool(InitSQLiteConnectionPoolConfig connectionPoolConfig, InitSQLiteDatabaseImp initSQLiteDatabaseImp) {
         versionControlLock.lock();
         writeConnection = SQLiteConnection.createWritableConnection(connectionPoolConfig.getDbPath(), 0);
         readConnectionsPool = new ArrayList<SQLiteConnection>();
