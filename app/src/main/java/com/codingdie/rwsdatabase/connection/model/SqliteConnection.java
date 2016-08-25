@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 /**
  * Created by xupen on 2016/8/22.
  */
-public class SqliteConnection {
+public class SQLiteConnection {
     private boolean inUsing = false;
     private boolean isWritable = false;
     private int index;
@@ -58,8 +58,8 @@ public class SqliteConnection {
     public void setSqLiteDatabase(SQLiteDatabase sqLiteDatabase) {
         this.sqLiteDatabase = sqLiteDatabase;
     }
-    public static SqliteConnection createReadableConnection(String path, int index) {
-        SqliteConnection readableConnection = new SqliteConnection();
+    public static SQLiteConnection createReadableConnection(String path, int index) {
+        SQLiteConnection readableConnection = new SQLiteConnection();
         readableConnection.setInUsing(false);
         readableConnection.setWritable(false);
         readableConnection.setIndex(index);
@@ -68,8 +68,8 @@ public class SqliteConnection {
 
     ;
 
-    public static SqliteConnection createWritableConnection(String path, int index) {
-        SqliteConnection writableConnection = new SqliteConnection();
+    public static SQLiteConnection createWritableConnection(String path, int index) {
+        SQLiteConnection writableConnection = new SQLiteConnection();
         writableConnection.setInUsing(false);
         writableConnection.setWritable(true);
         writableConnection.setIndex(index);

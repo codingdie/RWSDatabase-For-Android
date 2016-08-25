@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase.connection;
 import com.codingdie.rwsdatabase.connection.Imp.ConnectionPoolManagerImp;
 import com.codingdie.rwsdatabase.connection.Imp.InitSQLiteDatabaseImp;
 import com.codingdie.rwsdatabase.connection.model.SQLiteConnectionPoolConfig;
-import com.codingdie.rwsdatabase.connection.model.SqliteConnection;
+import com.codingdie.rwsdatabase.connection.model.SQLiteConnection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by xupen on 2016/8/22.
  */
 public class ConnectionPoolManager implements ConnectionPoolManagerImp {
-    private List<SqliteConnection> readConnectionsPool;
-    private SqliteConnection writeConnection;
+    private List<SQLiteConnection> readConnectionsPool;
+    private SQLiteConnection writeConnection;
     private ReentrantLock versionControlLock = new ReentrantLock(true);
     private ReentrantLock readConnectionLock = new ReentrantLock(true);
     private ReentrantLock writeConnectionLock = new ReentrantLock(true);
@@ -29,8 +29,8 @@ public class ConnectionPoolManager implements ConnectionPoolManagerImp {
     private Timer timer = new Timer();
 
     @Override
-    public SqliteConnection getReadConnection() {
-        return (SqliteConnection) execAfterInit(new AfterInitOperator() {
+    public SQLiteConnection getReadConnection() {
+        return (SQLiteConnection) execAfterInit(new AfterInitOperator() {
             @Override
             public Object exec() {
                 return getReadConnectionAfterInit();
@@ -38,8 +38,8 @@ public class ConnectionPoolManager implements ConnectionPoolManagerImp {
         });
     }
 
-    private SqliteConnection getReadConnectionAfterInit() {
-        SqliteConnection restConnection = null;
+    private SQLiteConnection getReadConnectionAfterInit() {
+        SQLiteConnection restConnection = null;
         try {
             readConnectionLock.lock();
             restConnection = getRestConnnectionForRead(readConnectionsPool);
@@ -64,18 +64,18 @@ public class ConnectionPoolManager implements ConnectionPoolManagerImp {
         return restConnection;
     }
 
-    private SqliteConnection getRestConnnectionForRead(List<SqliteConnection> sqliteConnections) {
-        for (int i = 0; i < sqliteConnections.size(); i++) {
-            if (sqliteConnections.get(i).isInUsing() == false) {
-                return sqliteConnections.get(i);
+    private SQLiteConnection getRestConnnectionForRead(List<SQLiteConnection> SQLiteConnections) {
+        for (int i = 0; i < SQLiteConnections.size(); i++) {
+            if (SQLiteConnections.get(i).isInUsing() == false) {
+                return SQLiteConnections.get(i);
             }
         }
         return null;
     }
 
     @Override
-    public SqliteConnection getWriteConnection() {
-        return (SqliteConnection) execAfterInit(new AfterInitOperator() {
+    public SQLiteConnection getWriteConnection() {
+        return (SQLiteConnection) execAfterInit(new AfterInitOperator() {
             @Override
             public Object exec() {
                 return getWriteConnectionAfterInit();
@@ -83,7 +83,7 @@ public class ConnectionPoolManager implements ConnectionPoolManagerImp {
         });
     }
 
-    private SqliteConnection getWriteConnectionAfterInit() {
+    private SQLiteConnection getWriteConnectionAfterInit() {
         try {
             writeConnectionLock.lock();
             if (writeConnection.isInUsing() == false) {
@@ -157,14 +157,14 @@ public class ConnectionPoolManager implements ConnectionPoolManagerImp {
     }
 
     @Override
-    public void releaseReadConnection(final SqliteConnection sqliteConnection) {
+    public void releaseReadConnection(final SQLiteConnection SQLiteConnection) {
 
         execAfterInit(new AfterInitOperator() {
             @Override
             public Object exec() {
                 readConnectionLock.lock();
-                sqliteConnection.setInUsing(false);
-                log("releaseReadConnection:" + sqliteConnection.getIndex() + "/" + (System.currentTimeMillis() - sqliteConnection.getBeginUsingTime()));
+                SQLiteConnection.setInUsing(false);
+                log("releaseReadConnection:" + SQLiteConnection.getIndex() + "/" + (System.currentTimeMillis() - SQLiteConnection.getBeginUsingTime()));
                 readConnectionCondition.signalAll();
 
                 readConnectionLock.unlock();
@@ -177,10 +177,10 @@ public class ConnectionPoolManager implements ConnectionPoolManagerImp {
     @Override
     public void initConnnectionPool(SQLiteConnectionPoolConfig connectionPoolConfig, InitSQLiteDatabaseImp initSQLiteDatabaseImp) {
         versionControlLock.lock();
-        writeConnection =SqliteConnection.createWritableConnection(connectionPoolConfig.getDbPath(), 0);
-        readConnectionsPool = new ArrayList<SqliteConnection>();
+        writeConnection = SQLiteConnection.createWritableConnection(connectionPoolConfig.getDbPath(), 0);
+        readConnectionsPool = new ArrayList<SQLiteConnection>();
         for (int i = 1; i < connectionPoolConfig.getMaxCount(); i++) {
-            readConnectionsPool.add(SqliteConnection.createReadableConnection(connectionPoolConfig.getDbPath(), i));
+            readConnectionsPool.add(SQLiteConnection.createReadableConnection(connectionPoolConfig.getDbPath(), i));
         }
         if (initSQLiteDatabaseImp != null) {
             writeConnection.setInUsing(true);
