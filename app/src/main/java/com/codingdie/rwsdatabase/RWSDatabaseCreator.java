@@ -14,26 +14,26 @@ public class RWSDatabaseCreator {
         RWSDatabaseManager rwsDatabaseManager=new RWSDatabaseManager();
         rwsDatabaseManager.init(dbPath,version,versionManager, connectionPoolSize);
         return  rwsDatabaseManager;
-    }
+     }
 
 
-    public RWSDatabaseCreator setDbPath(String dbPath) {
+    public RWSDatabaseCreator databasePath(String dbPath) {
         this.dbPath = dbPath;
         return this;
     }
 
 
-    public RWSDatabaseCreator setVersion(int version) {
+    public RWSDatabaseCreator version(int version) {
         this.version = version;
         return this;
     }
 
-    public RWSDatabaseCreator setVersionManager(Class versionManager) {
+    public RWSDatabaseCreator versionManager(Class versionManager) {
         this.versionManager = versionManager;
         return this;
     }
 
-    public RWSDatabaseCreator setConnectionPoolSize(int connectionPoolSize) {
+    public RWSDatabaseCreator connectionPoolSize(int connectionPoolSize) {
         this.connectionPoolSize = connectionPoolSize;
         return this;
     }
