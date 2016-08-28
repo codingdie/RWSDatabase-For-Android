@@ -27,6 +27,7 @@ public class RWSDatabaseManager {
                 initSQLiteConnectionPoolConfig.setMaxCount(maxConnectionCount);
                 initSQLiteConnectionPoolConfig.setDbPath(dbPath);
                 connectionPoolManager=new SQLConnectionPoolManager();
+                connectionPoolManager.openLog(false);
                 connectionPoolManager.initConnnectionPool(initSQLiteConnectionPoolConfig, new InitSQLiteDatabaseImp() {
                     @Override
                     public void initDatabase(WritableConnection sqLiteConnection) {
