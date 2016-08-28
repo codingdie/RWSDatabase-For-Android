@@ -118,7 +118,7 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
                 writeConnectionLock.lock();
                 writeConnection.setInUsing(false);
                 log("releaseWritableConnection:" + writeConnection.getIndex() + "/" + (System.currentTimeMillis() - writeConnection.getBeginUsingTime()));
-                writeConnectionCondition.signalAll();
+                writeConnectionCondition.signal();
                 writeConnectionLock.unlock();
                 return null;
             }
@@ -164,7 +164,7 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
                 readConnectionLock.lock();
                 SQLiteConnection.setInUsing(false);
                 log("releaseReadConnection:" + SQLiteConnection.getIndex() + "/" + (System.currentTimeMillis() - SQLiteConnection.getBeginUsingTime()));
-                readConnectionCondition.signalAll();
+                readConnectionCondition.signal();
 
                 readConnectionLock.unlock();
                 return null;
@@ -190,19 +190,27 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
             writeConnection.setInUsing(false);
         }
         initEndFlag = true;
-        versionControlCondition.signalAll();
+        versionControlCondition.signal();
         versionControlLock.unlock();
 
     }
 
     @Override
     public void destroy() {
+        readConnectionLock.lock();
+
         for (int i = 0; i < readConnectionsPool.size(); i++) {
             log("销毁链接" + readConnectionsPool.get(i).getIndex());
             readConnectionsPool.get(i).destroy();
-            readConnectionsPool.get(i).destroy();
         }
+        readConnectionsPool=new ArrayList<ReadableConnection>();
+        readConnectionLock.unlock();
+        writeConnectionLock.lock();
+
         writeConnection.destroy();
+        writeConnection=null;
+        writeConnectionLock.unlock();
+
     }
 
 

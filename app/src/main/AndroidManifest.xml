@@ -17,6 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".test.MultipleReadActivity"></activity>
+        <activity android:name=".test.MultipleReadAndWrite"></activity>
+
     </application>
 
 </manifest>

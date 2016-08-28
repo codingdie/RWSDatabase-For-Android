@@ -62,6 +62,7 @@ public class SQLiteConnection {
         return this.sqLiteDatabase.getVersion();
     }
     public Cursor execReadSQL(String sql , String[] param){
+
         return   this.sqLiteDatabase.rawQuery(sql ,param);
     }
 

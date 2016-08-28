@@ -3,10 +3,10 @@ package com.codingdie.rwsdatabase.test;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import com.codingdie.rwsdatabase.R;
 import com.codingdie.rwsdatabase.RWSDatabaseCreator;
@@ -19,69 +19,91 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MultipleReadAndWrite extends Activity {
-    private TextView textView1;
-    private TextView textView2;
-    private TextView textView3;
-    private TextView textView4;
-    private TextView textView5;
-    private TextView textView6;
-    private TextView textView7;
-
+    private TextView read1;
+    private TextView read2;
+    private TextView read3;
+    private TextView read4;
+    private TextView write1;
+    private TextView write2;
+    private TextView time;
+    private EditText poolSize;
+    private EditText numSize;
+    private  Button button;
     private int count1 = 0;
     private int count2 = 0;
     private int count3 = 0;
     private int count4 = 0;
     private long beginTime = 0;
+    private SqliteHelper sqliteHelper;
+    private  RWSDatabaseManager rwsDatabaseManager ;
+    private Handler handler = new Handler();
 
-    Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            if (msg.what == 1) {
-                textView1.setText("第" + count1 + "次查询结果(1s一次):\n" + msg.obj);
-            } else if (msg.what == 2) {
-                textView2.setText("第" + count2 + "次查询结果(3s一次):\n" + msg.obj);
-            } else if (msg.what == 3) {
-                textView3.setText("0-" + msg.obj);
-            } else if (msg.what == 4) {
-                textView4.setText("第" + count3 + "次查询结果(1s一次):\n" + msg.obj);
-            } else if (msg.what == 5) {
-                textView5.setText("第" + count4 + "次查询结果(3s一次):\n" + msg.obj);
-            } else if (msg.what == 6) {
-                textView6.setText("0-" + msg.obj);
-            }
-            return false;
-        }
-    });
-
-
-    ;
-
+    private Timer timeTimer = new Timer();
+    private   Timer newTestTimer1 = new Timer();
+    private   Timer oldTestTimer1 = new Timer();
+    private   Timer newTestTimer2 = new Timer();
+    private   Timer oldTestTimer2 = new Timer();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.mutiple_read_and_write);
         String dbPath = getSDPath() + File.separator + "test.db";
-        textView1 = (TextView) findViewById(R.id.read1);
-        textView2 = (TextView) findViewById(R.id.read2);
-        textView3 = (TextView) findViewById(R.id.write1);
-        textView4 = (TextView) findViewById(R.id.read3);
-        textView5 = (TextView) findViewById(R.id.read4);
-        textView6 = (TextView) findViewById(R.id.write2);
-        textView7 = (TextView) findViewById(R.id.time);
-        beginTime=System.currentTimeMillis();
-        SqliteHelper sqliteHelper = new SqliteHelper(this, "test");
-        RWSDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator().databasePath(dbPath).versionManager(VersionManager.class).version(2).connectionPoolSize(5).create();
-        newTestReadAndWrite(rwsDatabaseManager);
-        oldTestReadAndWrite(sqliteHelper);
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        read1 = (TextView) findViewById(R.id.read1);
+        read2 = (TextView) findViewById(R.id.read2);
+        read3 = (TextView) findViewById(R.id.write1);
+        read4 = (TextView) findViewById(R.id.read3);
+        write1 = (TextView) findViewById(R.id.read4);
+        write2 = (TextView) findViewById(R.id.write2);
+        time = (TextView) findViewById(R.id.time);
+        button=(Button)findViewById(R.id.control);
+        numSize=(EditText)findViewById(R.id.numSize);
+        poolSize=(EditText)findViewById(R.id.poolSize);
+        rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadAndWrite.this).databaseName("test1").versionManager(VersionManager.class).version(2).connectionPoolSize(Integer.valueOf(numSize.getText().toString())).create();
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(button.getText().equals("begin test")){
+                    MultipleReadAndWrite.this.deleteDatabase("test1");
+                    MultipleReadAndWrite.this.deleteDatabase("test2");
+                    beginTime=System.currentTimeMillis();
+                    beginTimeTimer();
+                    sqliteHelper = new SqliteHelper( MultipleReadAndWrite.this, "test2");
+                    rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadAndWrite.this).databaseName("test1").versionManager(VersionManager.class).version(2).connectionPoolSize(Integer.valueOf(numSize.getText().toString())).create();
+
+                    newTestReadAndWrite();
+                    oldTestReadAndWrite();
+                    button.setText("end test");
+                }else{
+                    timeTimer.cancel();
+                    newTestTimer1.cancel();
+                    newTestTimer2.cancel();
+                    oldTestTimer1.cancel();
+                    oldTestTimer2.cancel();
+
+                    rwsDatabaseManager.destroy();
+                    sqliteHelper.close();
+                    count1=0;
+                    count2=0;
+                    count3=0;
+                    count4=0;
+                    button.setText("begin test");
+
+                }
+            }
+        });
+    }
+    private void beginTimeTimer() {
+        timeTimer=new Timer();
+        timeTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                     handler.post(new Runnable() {
-                         @Override
-                         public void run() {
-                             textView7.setText("time:"+(System.currentTimeMillis()-beginTime));
-                         }
-                     });
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        time.setText("time:"+(System.currentTimeMillis()-beginTime));
+                    }
+                });
             }
         },0,10);
     }
@@ -96,63 +118,24 @@ public class MultipleReadAndWrite extends Activity {
         return sdDir.toString();
     }
 
-    public void multipleWriteTest(final RWSDatabaseManager rwsDatabaseManager) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                WritableConnection writableSQLiteConnection = rwsDatabaseManager.getWritableConnection();
-                writableSQLiteConnection.execWriteSQL("delete from Class where classId<=3", new Object[]{});
-
-                writableSQLiteConnection.execWriteSQL("insert into Class(`className`,`classId`) values (?,?)", new Object[]{"一班", 1});
-                writableSQLiteConnection.execWriteSQL("insert into Class(`className`,`classId`) values (?,? )", new Object[]{"二班", 2});
-                writableSQLiteConnection.execWriteSQL("insert into Class(`className`,`classId`) values (?,?)", new Object[]{"三班", 3});
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                rwsDatabaseManager.releaseWritableConnection();
-            }
-        }).start();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                WritableConnection writableSQLiteConnection = rwsDatabaseManager.getWritableConnection();
-                writableSQLiteConnection.execWriteSQL("delete from Class where classId>3 and classId<=6", new Object[]{});
-                writableSQLiteConnection.execWriteSQL("insert into Class(`className`,`classId`) values (?,?)", new Object[]{"四班", 4});
-                writableSQLiteConnection.execWriteSQL("insert into Class(`className`,`classId`) values (?,? )", new Object[]{"五班", 5});
-                writableSQLiteConnection.execWriteSQL("insert into Class(`className`,`classId`) values (?,?)", new Object[]{"六班", 6});
-                rwsDatabaseManager.releaseWritableConnection();
-
-            }
-        }).start();
-    }
-
-    public void oldTestReadAndWrite(final SqliteHelper sqliteHelper) {
+    public void oldTestReadAndWrite() {
         SQLiteDatabase sqLiteDatabase = sqliteHelper.getWritableDatabase();
         sqLiteDatabase.execSQL("delete from Student");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (int j = 0; ; j+=50) {
+                for (int j = 0; ; j+=Integer.valueOf(numSize.getText().toString())) {
                     SQLiteDatabase writableSQLiteConnection = sqliteHelper.getWritableDatabase();
                     writableSQLiteConnection.beginTransaction();
-                    for (int i=0;i<50;i++){
-                        Message message = new Message();
-                        message.what = 6;
-                        message.obj = j+i;
-                        handler.sendMessage(message);
-                        try {
-                            Thread.sleep(50 );
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        writableSQLiteConnection.execSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{j+i, j+i});
+                    for (int i=0;i<Integer.valueOf(numSize.getText().toString());i++){
+                        final int now=i+j;
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                write2.setText("正在插入:"+now);
+                            }
+                        });
+                        writableSQLiteConnection.execSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{now, now});
 
                     }
                     writableSQLiteConnection.setTransactionSuccessful();
@@ -162,51 +145,43 @@ public class MultipleReadAndWrite extends Activity {
 
             }
         }).start();
-        new Thread(new Runnable() {
+        oldTestTimer1.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; ; i++) {
-                    count3++;
-                    SQLiteDatabase writableSQLiteConnection = sqliteHelper.getReadableDatabase();
-                    Cursor cursor = writableSQLiteConnection.rawQuery("select max(studentId)  from Student ", new String[]{});
-                    cursor.moveToNext();
-                    try {
-                        Thread.sleep(800);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                SQLiteDatabase readableConnection = sqliteHelper.getReadableDatabase();
+                Cursor cursor = readableConnection.rawQuery("select sum(studentId)  from Student ", new String[]{});
+                cursor.moveToNext();
+                final   long sum = cursor.getLong(0);
+                cursor.close();
+                count3++;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        read3.setText("第"+count3+"次求和:"+sum);
                     }
-                    Message message = new Message();
-                    message.what = 4;
-                    message.obj = cursor.getLong(0);
-                    handler.sendMessage(message);
-                    cursor.close();
-                }
+                });
             }
-        }).start();
-        new Thread(new Runnable() {
+        },0,1000);
+        oldTestTimer2.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; ; i++) {
-                    count4++;
-                    SQLiteDatabase readableConnection = sqliteHelper.getReadableDatabase();
-                    Cursor cursor = readableConnection.rawQuery("select sum(studentId)  from Student ", new String[]{});
-                    cursor.moveToNext();
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                SQLiteDatabase readableConnection = sqliteHelper.getReadableDatabase();
+                Cursor cursor = readableConnection.rawQuery("select max(studentId)  from Student ", new String[]{});
+                cursor.moveToNext();
+                final   long max = cursor.getLong(0);
+                cursor.close();
+                count4++;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        read3.setText("第"+count4+"次求和:"+max);
                     }
-                    Message message = new Message();
-                    message.what = 5;
-                    message.obj = cursor.getLong(0);
-                    handler.sendMessage(message);
-                    cursor.close();
-                }
-        }
-        }).start();
+                });
+            }
+        },0,100);
     }
 
-    public void newTestReadAndWrite(final RWSDatabaseManager rwsDatabaseManager) {
+    public void newTestReadAndWrite() {
         WritableConnection writableSQLiteConnection = rwsDatabaseManager.getWritableConnection();
         writableSQLiteConnection.execWriteSQL("delete from Student");
         rwsDatabaseManager.releaseWritableConnection();
@@ -214,21 +189,19 @@ public class MultipleReadAndWrite extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (int j = 0; ; j+=50) {
+                for (int j = 0;  ; j+=Integer.valueOf(numSize.getText().toString())) {
                     WritableConnection writableSQLiteConnection = rwsDatabaseManager.getWritableConnection();
                     writableSQLiteConnection.beginTransaction();
 
-                    for (int i=0;i<50;i++){
-                        Message message = new Message();
-                        message.what = 3;
-                        message.obj = j+i;
-                        handler.sendMessage(message);
-                        try {
-                            Thread.sleep(50 );
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        writableSQLiteConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{j+i, j+i});
+                    for (int i=0;i<Integer.valueOf(numSize.getText().toString());i++){
+                        final int now=i+j;
+                         handler.post(new Runnable() {
+                             @Override
+                             public void run() {
+                               write1.setText("正在插入:"+now);
+                             }
+                         });
+                        writableSQLiteConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{now, now});
 
                     }
 
@@ -241,52 +214,40 @@ public class MultipleReadAndWrite extends Activity {
             }
         }).start();
 
-        new Thread(new Runnable() {
+        newTestTimer1.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; ; i++) {
-
-                    count1++;
-                    ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
-                    Cursor cursor = readableConnection.execReadSQL("select max(studentId)  from Student ", new String[]{});
-                    cursor.moveToNext();
-                    Message message = new Message();
-                    message.what = 1;
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
+                Cursor cursor = readableConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
+                cursor.moveToNext();
+                final   long sum = cursor.getLong(0);
+                cursor.close();
+                count1++;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        read1.setText("第"+count1+"次求和:"+sum);
                     }
-                    message.obj = cursor.getLong(0);
-                    handler.sendMessage(message);
-                    cursor.close();
-                    rwsDatabaseManager.releaseReadableDatabase(readableConnection);
-                }
+                });
             }
-        }).start();
-        new Thread(new Runnable() {
+        },0,1000);
+        newTestTimer2.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; ; i++) {
-                    count2++;
-                    ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
-                    Cursor cursor = readableConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
-                    cursor.moveToNext();
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
+                Cursor cursor = readableConnection.execReadSQL("select max(studentId)  from Student ", new String[]{});
+                cursor.moveToNext();
+                final   long max = cursor.getLong(0);
+                cursor.close();
+                count2++;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        read2.setText("第"+count4+"次求和:"+max);
                     }
-                    Message message = new Message();
-                    message.what = 2;
-                    message.obj = cursor.getLong(0);
-                    handler.sendMessage(message);
-                    cursor.close();
-                    rwsDatabaseManager.releaseReadableDatabase(readableConnection);
-                }
-
+                });
             }
-        }).start();
+        },0,100);
     }
 
 

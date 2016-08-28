@@ -3,10 +3,10 @@ package com.codingdie.rwsdatabase.test;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import com.codingdie.rwsdatabase.R;
 import com.codingdie.rwsdatabase.RWSDatabaseCreator;
@@ -24,57 +24,87 @@ import static java.lang.Thread.sleep;
 public class MultipleReadActivity extends Activity {
     private TextView textView1;
     private TextView textView2;
-    private TextView textView3;
-    private TextView textView4;
-    private TextView textView5;
-    private TextView textView6;
-    private TextView textView7;
-
+    private TextView time;
+    private EditText poolSize;
+    private EditText dbSize;
+    private Button button;
     private int count1 = 0;
     private int count2 = 0;
-    private int count3 = 0;
-    private int count4 = 0;
     private long beginTime = 0;
+    private SqliteHelper sqliteHelper;
+    private  RWSDatabaseManager rwsDatabaseManager ;
+    private Timer timeTimer = new Timer();
 
-    Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            if (msg.what == 1) {
-                textView1.setText("执行第" + count1 + "次查询结果");
-            } else if (msg.what == 4) {
-                textView2.setText("执行第" + count2 + "次查询结果");
-            }
-            return false;
-        }
-    });
+    private   Timer newTestTimer = new Timer();
+    private   Timer oldTestTimer = new Timer();
 
-
-    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        String dbPath = getSDPath() + File.separator + "test.db";
+        setContentView(R.layout.mutiple_read);
+
+
+
         textView1 = (TextView) findViewById(R.id.read1);
         textView2 = (TextView) findViewById(R.id.read2);
-        textView3 = (TextView) findViewById(R.id.write1);
-        textView4 = (TextView) findViewById(R.id.read3);
-        textView5 = (TextView) findViewById(R.id.read4);
-        textView6 = (TextView) findViewById(R.id.write2);
-        textView7 = (TextView) findViewById(R.id.time);
-        beginTime=System.currentTimeMillis();
-        SqliteHelper sqliteHelper = new SqliteHelper(this, "test");
-        RWSDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator().databasePath(dbPath).versionManager(VersionManager.class).version(2).connectionPoolSize(100).create();
-        newTestRead(rwsDatabaseManager);
-//        oldTestRead(sqliteHelper);
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        poolSize=(EditText)findViewById(R.id.poolSize);
+        dbSize=(EditText)findViewById(R.id.dbSize);
+        button=(Button)findViewById(R.id.control);
+        time = (TextView) findViewById(R.id.time);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 if(button.getText().equals("begin test")){
+                     MultipleReadActivity.this.deleteDatabase("test1");
+                     MultipleReadActivity.this.deleteDatabase("test2");
+                     beginTime=System.currentTimeMillis();
+                     beginTimeTimer();
+                     sqliteHelper = new SqliteHelper( MultipleReadActivity.this, "test2");
+                     rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this).databaseName("test1").versionManager(VersionManager.class).version(2).connectionPoolSize(Integer.valueOf(poolSize.getText().toString())).create();
+                     SQLiteDatabase sqLiteDatabase=  sqliteHelper.getWritableDatabase();
+                     WritableConnection writableConnection=rwsDatabaseManager.getWritableConnection();
+                     sqLiteDatabase.beginTransaction();
+                     writableConnection.beginTransaction();
+
+                     for(int i=0;i<Integer.valueOf( dbSize.getText().toString());i++){
+                         sqLiteDatabase.execSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+                         writableConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+                     }
+                     sqLiteDatabase.setTransactionSuccessful();
+                     writableConnection.setTransactionSuccessful();
+                     sqLiteDatabase.endTransaction();
+                     writableConnection.endTransaction();
+                     rwsDatabaseManager.releaseWritableConnection();
+                     sqLiteDatabase.close();
+                     newTestRead(rwsDatabaseManager);
+                     oldTestRead(sqliteHelper);
+                     button.setText("end test");
+                 }else{
+                     oldTestTimer.cancel();
+                     newTestTimer.cancel();
+                     timeTimer.cancel();
+                     rwsDatabaseManager.destroy();
+                     sqliteHelper.close();
+                     count1=0;
+                     count2=3;
+                     button.setText("begin test");
+
+                 }
+            }
+        });
+
+    }
+
+    private void beginTimeTimer() {
+        timeTimer=new Timer();
+        timeTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                     handler.post(new Runnable() {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                          @Override
                          public void run() {
-                             textView7.setText("time:"+(System.currentTimeMillis()-beginTime));
+                             time.setText("time:"+(System.currentTimeMillis()-beginTime));
                          }
                      });
             }
@@ -94,24 +124,28 @@ public class MultipleReadActivity extends Activity {
 
 
     public void oldTestRead(final SqliteHelper sqliteHelper) {
-        new Timer().schedule(new TimerTask() {
+        oldTestTimer=new Timer();
+        oldTestTimer.schedule(new TimerTask() {
             @Override
             public void run() {
 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        SQLiteDatabase writableSQLiteConnection = sqliteHelper.getReadableDatabase();
-                        Cursor cursor = writableSQLiteConnection.rawQuery("select max(studentId)  from Student ", new String[]{});
+                        SQLiteDatabase sqLiteDatabase = sqliteHelper.getReadableDatabase();
+                        Cursor cursor = sqLiteDatabase.rawQuery("select sum(studentId)  from Student ", new String[]{});
                         cursor.moveToNext();
-                        LogUtil.log("2:"+cursor.getInt(0));
+                        final long sum=cursor.getInt(0);
+                        LogUtil.log("2:"+sum);
 
-                        Message message = new Message();
-                        message.what = 4;
-                        handler.sendMessage(message);
                         cursor.close();
                         count2++;
-                        writableSQLiteConnection.close();
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                 textView2.setText("第"+count2+"次查询总和是:"+sum);
+                            }
+                        });
                     }
                 }).start();
             }
@@ -119,23 +153,28 @@ public class MultipleReadActivity extends Activity {
 
     }
     public void newTestRead(final RWSDatabaseManager rwsDatabaseManager) {
-        new Timer().schedule(new TimerTask() {
+        newTestTimer=new Timer();
+        newTestTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         ReadableConnection writableSQLiteConnection = rwsDatabaseManager.getReadableDatabase();
-                        Cursor cursor = writableSQLiteConnection.execReadSQL("select max(studentId)  from Student ", new String[]{});
+                        Cursor cursor = writableSQLiteConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
                         cursor.moveToNext();
-                        LogUtil.log("1:"+cursor.getInt(0));
-
-                        Message message = new Message();
-                        message.what = 1;
-                        handler.sendMessage(message);
+                        final long sum=cursor.getInt(0);
+                        LogUtil.log("1:"+sum);
                         cursor.close();
-                        count1++;
                         rwsDatabaseManager.releaseReadableDatabase(writableSQLiteConnection);
+                        count1++;
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                textView1.setText("第"+count1+"次查询总和是:"+sum);
+                            }
+                        });
+
                     }
                 }).start();
             }

@@ -3,6 +3,7 @@ package com.codingdie.rwsdatabase.test;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import com.codingdie.rwsdatabase.R;
 
 /**
@@ -14,10 +15,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_list);
     }
-    public void testMultipleRead(){
+    public void testMultipleRead(View v){
         startActivity(new Intent(this,MultipleReadActivity.class));
     }
-    public void testMultipleReadAndWrite(){
+    public void testMultipleReadAndWrite(View v){
         startActivity(new Intent(this,MultipleReadAndWrite.class));
     }
 }

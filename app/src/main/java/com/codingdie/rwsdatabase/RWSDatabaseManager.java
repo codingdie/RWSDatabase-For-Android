@@ -70,6 +70,15 @@ public class RWSDatabaseManager {
         });
     }
 
+    public void  destroy(){
+        execAfterInit(new AfterInitOperator() {
+            @Override
+            public Object exec() {
+                connectionPoolManager.destroy();
+                return null;
+            }
+        });
+    }
     public void releaseWritableConnection(){
         execAfterInit(new AfterInitOperator() {
             @Override
