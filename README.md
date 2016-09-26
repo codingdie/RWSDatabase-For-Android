@@ -2,6 +2,7 @@
 a read and write  separate sqlite database framework for Android with ORM,versionControl,connectionPool,threadPool (一个带orm,版本控制,数据库连接池,线程池的读写分离的高性能的android sqlite数据库框架)
 
 Why use this database framework?
+
 为什么使用这个数据库框架?
 
 1,The only open source database framework for a multi threaded read and write separation(write does not affect the reading)
