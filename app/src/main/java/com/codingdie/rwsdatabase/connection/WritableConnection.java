@@ -40,4 +40,13 @@ public class WritableConnection extends SQLiteConnection {
     public void setVersion(int version) {
         this.sqLiteDatabase.setVersion(version);
     }
+
+
+    //TODO
+    @Deprecated
+    public void insertObjectIntoTable(Object object,String tableName) {
+
+
+    }
+
 }

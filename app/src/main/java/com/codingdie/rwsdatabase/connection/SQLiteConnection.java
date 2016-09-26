@@ -2,6 +2,9 @@ package com.codingdie.rwsdatabase.connection;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import com.google.gson.Gson;
+
+import java.util.List;
 
 /**
  * Created by xupen on 2016/8/22.
@@ -62,10 +65,19 @@ public class SQLiteConnection {
         return this.sqLiteDatabase.getVersion();
     }
     public Cursor execReadSQL(String sql , String[] param){
-
         return   this.sqLiteDatabase.rawQuery(sql ,param);
     }
+    //TODO
+    @Deprecated
+    public <T> T queryObject(String sql , String[] param,Class<T> tClass,List<String>... ignoreProps){
+       return  null;
+    }
 
+    //TODO
+    @Deprecated
+    public List queryObjectList(String sql , String[] param, Class tClass,List<String>... ignoreProps){
+        return  null;
+    }
 
 
 }
