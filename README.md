@@ -3,12 +3,16 @@ a read and write  separate sqlite database framework for Android with ORM,versio
 
 Why use this database framework?
 为什么使用这个数据库框架?
+
 1,The only open source database framework for a multi threaded read and write separation(write does not affect the reading)
  唯一的一个实现了多线程数据库读写分离的框架(写不卡读)
+
 2,High performance, flexible, simple and easy to use ORM mapping reference to the implementation of Mybatis framework for server
  高性能,灵活的,简单易用的ORM映射,参照了服务端最常用的mybatis框架并改进
+
 3,Clear traceability version management module
  清晰的可追踪的版本管理
+
 4,The only database framework to support the function of table division,
  唯一一个支持分表功能的数据库框架,分表在手机端几乎是最终的数据库查询优化方案(微信qq均已实践,一般应用不会用上)
 
