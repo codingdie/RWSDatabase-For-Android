@@ -32,7 +32,7 @@ public class MultipleReadActivity extends Activity {
     private int count2 = 0;
     private long beginTime = 0;
     private SqliteHelper sqliteHelper;
-    private  RWSDatabaseManager rwsDatabaseManager ;
+    private RWSDatabaseManager rwsDatabaseManager ;
     private Timer timeTimer = new Timer();
 
     private   Timer newTestTimer = new Timer();
@@ -61,7 +61,12 @@ public class MultipleReadActivity extends Activity {
                      beginTime=System.currentTimeMillis();
                      beginTimeTimer();
                      sqliteHelper = new SqliteHelper( MultipleReadActivity.this, "test2");
-                     rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this).databaseName("test1").versionManager(VersionManager.class).version(2).connectionPoolSize(Integer.valueOf(poolSize.getText().toString())).create();
+                     rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this) //context
+                                                    .databaseName("test1")                      //dbname
+                                                    .versionManager(VersionManager.class)       //versionmanager 版本管理器
+                                                    .version(2)                                  //version 版本
+                                                    .connectionPoolSize(20)                      //connectionPoolSize 连接池大小
+                                                    .create();
                      SQLiteDatabase sqLiteDatabase=  sqliteHelper.getWritableDatabase();
                      WritableConnection writableConnection=rwsDatabaseManager.getWritableConnection();
                      sqLiteDatabase.beginTransaction();

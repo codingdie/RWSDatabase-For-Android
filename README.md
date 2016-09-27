@@ -27,9 +27,19 @@ Generally speaking, this framework is to solve the problem of building large-sca
 2,import this git project as a Android Library
 将此git工程作为Android Library引入
 
-3,import with gradle
- gradle引入(待做)
+3,import with gradle(TODO)
+gradle引入(待做)
 
 
 
-##Installation
+##Simple Usage
+1,create the database
+  创建数据库
+ ```
+   RwsDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this)      //context
+                                                       .databaseName("test1")                      //dbname
+                                                       .versionManager(VersionManager.class)       //versionmanager 版本管理器
+                                                       .version(2)                                 //version 版本
+                                                       .connectionPoolSize(20)                     //connectionPoolSize 连接池大小
+                                                       .create();     `
+ ```
