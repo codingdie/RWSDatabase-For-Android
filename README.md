@@ -34,7 +34,7 @@ gradle引入(待做)
 
 ##Simple Usage
 1,create the database
-  创建数据库
+  创建数据库管理对象RWSDatabaseManager
   ```
   RwsDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this)      //context
                                                         .databaseName("test1")                      //dbname
