@@ -1,14 +1,15 @@
 # RWSDatabase
-a read and write  separate sqlite database framework for Android with ORM,versionControl,connectionPool,threadPool (一个带orm,版本控制,数据库连接池,线程池的读写分离的高性能的android sqlite数据库框架)
+a read and write  separate sqlite database framework for Android with ORM,versionControl,connectionPool,threadPool
+一个带orm,版本控制,数据库连接池,线程池的读写分离的高性能的android sqlite数据库框架.
 
 Why use this database framework?
 为什么使用这个数据库框架?
 
 1,The only open source database framework for a multi threaded read and write separation(write does not affect the reading)
- 唯一的一个实现了多线程数据库读写分离的框架(写不卡读)
+唯一的一个实现了多线程数据库读写分离的框架(写不卡读)
 
 2,High performance, flexible, simple and easy to use ORM mapping reference to the implementation of Mybatis framework for server
- 高性能,灵活的,简单易用的ORM映射,参照了服务端最常用的mybatis框架并改进
+高性能,灵活的,简单易用的ORM映射,参照了服务端最常用的mybatis框架并改进
 
 3,Clear traceability version management module
 清晰的可追踪的版本管理
@@ -18,3 +19,17 @@ Why use this database framework?
 
 Generally speaking, this framework is to solve the problem of building large-scale application database level, is the first choice of large scale application data framework, but may not be too suitable for small applications
 总得来说,这个框架是为了解决构建大型应用数据库层面各种问题,是大型应用数据框架首选,但可能并不太适用于小应用
+***
+##Installation
+1,download the latest jar package from the official download into the project[[download]](wwww.codeingdie.com/RWSDatabase).
+从官网下载最新jar包导入工程[[下载]](wwww.codeingdie.com/RWSDatabase).
+
+2,import this git project as a Android Library
+将此git工程作为Android Library引入
+
+3,import with gradle
+ gradle引入(待做)
+
+
+
+##Installation
