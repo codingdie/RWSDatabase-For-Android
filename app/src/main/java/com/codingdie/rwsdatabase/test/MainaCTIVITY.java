@@ -27,64 +27,67 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_list);
-        String path1=   Environment.getExternalStorageDirectory().getAbsolutePath()+"/test1.sqlite";
-        String path2=   Environment.getExternalStorageDirectory().getAbsolutePath()+"/test2.sqlite";
-        final SQLiteDatabase db1=SQLiteDatabase.openOrCreateDatabase(path1,null);
-        final SQLiteDatabase db2=SQLiteDatabase.openOrCreateDatabase(path2,null);
+        String path1 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test1.sqlite";
+        String path2 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/test2.sqlite";
+        final SQLiteDatabase db1 = SQLiteDatabase.openOrCreateDatabase(path1, null);
+        final SQLiteDatabase db2 = SQLiteDatabase.openOrCreateDatabase(path2, null);
         new Thread(new Runnable() {
             @Override
             public void run() {
                 long begin = System.currentTimeMillis();
                 System.out.println("db1 begin");
 
-                for (int i=0;i<10;i++){
-                    Cursor cursor= db1.rawQuery("select * from archiveRecord   where archiveRecordId=210924 ",new String[]{});
+                for (int i = 0; i < 10; i++) {
+                    Cursor cursor = db1.rawQuery("select * from archiveRecord   where archiveRecordId=210924 ", new String[]{});
                     cursor.moveToNext();
-                    ArchiveRecord archiveRecord=  ArchiveRecord.fillBaseRecordInfo(cursor);
-                    cursor= db1.rawQuery("select * from archiveRecordItem   where archiveRecordId=210924 order by ARCHIVETEMPLATESUBID",new String[]{});
+                    ArchiveRecord archiveRecord = ArchiveRecord.fillBaseRecordInfo(cursor);
+                    cursor = db1.rawQuery("select * from archiveRecordItem   where archiveRecordId=210924 order by ARCHIVETEMPLATESUBID", new String[]{});
 
-                    while (cursor.moveToNext()){
+                    while (cursor.moveToNext()) {
                         archiveRecord.getItemList().add(fillRecordSimplyItem(cursor));
                     }
-                    System.out.println("archiveTemplateId:"+archiveRecord.getArchiveTemplateId());
-                    cursor= db1.rawQuery("select * from archiveTemplateItem   where archiveTemplateId=? order by ARCHIVETEMPLATESUBID",new String[]{String.valueOf(archiveRecord.getArchiveTemplateId())});
-                    int j=0;
-                    while (cursor.moveToNext()){
-                        fillRecordItemTemplateInfo(cursor,archiveRecord.getItemList().get(j));
+                    System.out.println("archiveTemplateId:" + archiveRecord.getArchiveTemplateId());
+                    cursor = db1.rawQuery("select * from archiveTemplateItem   where archiveTemplateId=? order by ARCHIVETEMPLATESUBID", new String[]{String.valueOf(archiveRecord.getArchiveTemplateId())});
+                    int j = 0;
+                    while (cursor.moveToNext()) {
+                        fillRecordItemTemplateInfo(cursor, archiveRecord.getItemList().get(j));
                         j++;
                     }
-                    if(i==0){
-                        System.out.println("data:"+new Gson().toJson(archiveRecord));
+                    if (i == 0) {
+                        System.out.println("data:" + new Gson().toJson(archiveRecord));
                     }
                 }
                 long end = System.currentTimeMillis();
-                System.out.println("db1 query:"+(end-begin)*1.0/10);
+                System.out.println("db1 query:" + (end - begin) * 1.0 / 10);
 
             }
-        }).start();;
+        }).start();
+        ;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 long begin = System.currentTimeMillis();
                 System.out.println("db2 begin");
-                for (int i=0;i<10;i++){
+                for (int i = 0; i < 10; i++) {
 
-                    Cursor cursor= db2.rawQuery("select * from archiveRecord   where archiveRecordId=210924 ",new String[]{});
+                    Cursor cursor = db2.rawQuery("select * from archiveRecord   where archiveRecordId=210924 ", new String[]{});
                     cursor.moveToNext();
-                    ArchiveRecord archiveRecord=  ArchiveRecord.fillBaseRecordInfo(cursor);
-                    cursor= db2.rawQuery("select * from archiveRecordItem   where archiveRecordId=210924 ",new String[]{});
-                    while (cursor.moveToNext()){
+                    ArchiveRecord archiveRecord = ArchiveRecord.fillBaseRecordInfo(cursor);
+                    cursor = db2.rawQuery("select * from archiveRecordItem   where archiveRecordId=210924 ", new String[]{});
+                    while (cursor.moveToNext()) {
                         archiveRecord.getItemList().add(fillRecordItem(cursor));
                     }
-                    if(i==0){
-                        System.out.println("data:"+new Gson().toJson(archiveRecord));
+                    if (i == 0) {
+                        System.out.println("data:" + new Gson().toJson(archiveRecord));
                     }
-                }                long end = System.currentTimeMillis();
-                System.out.println("db2 query:"+(end-begin)*1.0/10);
+                }
+                long end = System.currentTimeMillis();
+                System.out.println("db2 query:" + (end - begin) * 1.0 / 10);
 
             }
         });
     }
+
     private ArchiveRecord setOneRecordValuesFromCursor(Cursor cursor) {
         ArchiveRecord archiveRecord = null;
         int itemIndex = -1;
@@ -103,6 +106,7 @@ public class MainActivity extends Activity {
 
         return archiveRecord;
     }
+
     private ContentValues buildRecordItemValue(ArchiveRecordItem archiveRecordItem) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("archiveRecordId", 1);
@@ -136,7 +140,8 @@ public class MainActivity extends Activity {
         contentValues.put("itemScore", archiveRecordItem.getItemScore());
         return contentValues;
     }
-    private ContentValues buildRecordSimplyItemValue( ArchiveRecordItem archiveRecordItem) {
+
+    private ContentValues buildRecordSimplyItemValue(ArchiveRecordItem archiveRecordItem) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("archiveRecordId", 0L);
         contentValues.put("value", archiveRecordItem.getValue());
@@ -145,6 +150,7 @@ public class MainActivity extends Activity {
         contentValues.put("itemScore", archiveRecordItem.getItemScore());
         return contentValues;
     }
+
     private ContentValues buildRecordValue(ArchiveRecord archiveRecord, int bagId, int isRead) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("archiveRecordId", archiveRecord.getArchiveRecordId());
@@ -174,7 +180,8 @@ public class MainActivity extends Activity {
         contentValues.put("totalScore", archiveRecord.getTotalScore());
         return contentValues;
     }
-    public  ArchiveRecordItem fillRecordSimplyItem(Cursor cursor) {
+
+    public ArchiveRecordItem fillRecordSimplyItem(Cursor cursor) {
         ArchiveRecordItem archiveRecordItem = new ArchiveRecordItem();
         if (cursor.getColumnIndex("archiveRecordRowId") != -1) {
             archiveRecordItem.setLocalArchiveRecordId(cursor.getLong(cursor.getColumnIndex("ARCHIVERECORDROWID")));
@@ -185,7 +192,8 @@ public class MainActivity extends Activity {
         archiveRecordItem.setItemScore(cursor.getFloat(cursor.getColumnIndex("ITEMSCORE")));
         return archiveRecordItem;
     }
-    public  void fillRecordItemTemplateInfo(Cursor cursor,ArchiveRecordItem archiveRecordItem ) {
+
+    public void fillRecordItemTemplateInfo(Cursor cursor, ArchiveRecordItem archiveRecordItem) {
         archiveRecordItem.setDisable(cursor.getInt(cursor.getColumnIndex("DISABLE")));
         archiveRecordItem.setDisplayName(cursor.getString(cursor.getColumnIndex("DISPLAYNAME")));
         archiveRecordItem.setEngAbbr(cursor.getString(cursor.getColumnIndex("ENGABBR")));
@@ -207,7 +215,8 @@ public class MainActivity extends Activity {
         archiveRecordItem.setAnalyseCategory(cursor.getString(cursor.getColumnIndex("ANALYSECATEGORY")));
         archiveRecordItem.setFieldValueGenerator(cursor.getString(cursor.getColumnIndex("FIELDVALUEGENERATOR")));
     }
-    public  ArchiveRecordItem fillRecordItem(Cursor cursor) {
+
+    public ArchiveRecordItem fillRecordItem(Cursor cursor) {
         ArchiveRecordItem archiveRecordItem = new ArchiveRecordItem();
         if (cursor.getColumnIndex("archiveRecordRowId") != -1) {
             archiveRecordItem.setLocalArchiveRecordId(cursor.getLong(cursor.getColumnIndex("ARCHIVERECORDROWID")));
@@ -242,10 +251,12 @@ public class MainActivity extends Activity {
 
         return archiveRecordItem;
     }
-    public void testMultipleRead(View v){
-        startActivity(new Intent(this,MultipleReadActivity.class));
+
+    public void testMultipleRead(View v) {
+        startActivity(new Intent(this, MultipleReadActivity.class));
     }
-    public void testMultipleReadAndWrite(View v){
-        startActivity(new Intent(this,MultipleReadAndWrite.class));
+
+    public void testMultipleReadAndWrite(View v) {
+        startActivity(new Intent(this, MultipleReadAndWrite.class));
     }
 }

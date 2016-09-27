@@ -35,11 +35,11 @@ gradle引入(待做)
 ##Simple Usage
 1,create the database
   创建数据库
- ```
-   RwsDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this)      //context
-                                                       .databaseName("test1")                      //dbname
-                                                       .versionManager(VersionManager.class)       //versionmanager 版本管理器
-                                                       .version(2)                                 //version 版本
-                                                       .connectionPoolSize(20)                     //connectionPoolSize 连接池大小
-                                                       .create();     `
- ```
+  ```
+  RwsDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this)      //context
+                                                        .databaseName("test1")                      //dbname
+                                                        .versionManager(VersionManager.class)       //versionmanager 版本管理器
+                                                        .version(2)                                  //version 版本
+                                                        .connectionPoolSize(20)                      //connectionPoolSize 连接池大小
+                                                        .create();       `
+  ```
