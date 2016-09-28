@@ -43,8 +43,8 @@ gradle引入(待做)
                                                         .connectionPoolSize(20)                      //connectionPoolSize 连接池大小
                                                         .create();       `
   ```  
-  ```
-  public class VersionManager {
+  ``` 
+public class VersionManager {
     
     //创建数据库(版本1)
     public void  createDatabase(WritableConnection db){
