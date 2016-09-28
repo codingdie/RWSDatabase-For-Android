@@ -33,8 +33,8 @@ gradle引入(待做)
 
 
 ##Simple Usage
-1,create the database  
-创建数据库管理对象RWSDatabaseManager
+1,create or upgrade the database  and get the databasemanager  
+创建或者升级数据库, 获取数据库管理对象
   ```
   RwsDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this)      //context
                                                         .databaseName("test1")                      //dbname
@@ -42,4 +42,34 @@ gradle引入(待做)
                                                         .version(2)                                  //version 版本
                                                         .connectionPoolSize(20)                      //connectionPoolSize 连接池大小
                                                         .create();       `
-  ```
+  ```  
+  ``` 
+public class VersionManager {
+    
+    //创建数据库(版本1)
+    public void  createDatabase(WritableConnection db){
+        db.execWriteSQL("DROP TABLE IF EXISTS `Class`");
+        db.execWriteSQL("CREATE TABLE `Class` ( `classId`  INTEGER PRIMARY KEY  ,`className`  TEXT)");
+    }
+    //从版本1升级到版本2
+    public void  version1ToVersion2(WritableConnection db){
+        db.execWriteSQL("DROP TABLE IF EXISTS `Student`");
+        db.execWriteSQL("CREATE TABLE `Student` ( `classId`  INTEGER PRIMARY KEY  ,`studentId`  INTEGER ,`studentName`  TEXT)");
+        db.execWriteSQL("DROP TABLE IF EXISTS `Teacher`");
+        db.execWriteSQL("CREATE TABLE `Teacher` ( `classId`  INTEGER PRIMARY KEY  ,`teacherId`  INTEGER ,`teacherName`  TEXT)");
+
+    }
+    //从版本n升级到版本n+1的变动
+    public void  version(n)ToVersion(n+1)(WritableConnection db){
+     
+    }
+}
+
+  
+ 
+ ```  
+ 2 simply query  
+   简单查询  
+ ```
+ 
+ ```
