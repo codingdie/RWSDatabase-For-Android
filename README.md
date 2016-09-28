@@ -33,8 +33,8 @@ gradle引入(待做)
 
 
 ##Simple Usage
-1,create the database  
-创建数据库管理对象
+1,create or upgrade the database  and get the databasemanager  
+创建或者升级数据库, 获取数据库管理对象
   ```
   RwsDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this)      //context
                                                         .databaseName("test1")                      //dbname
