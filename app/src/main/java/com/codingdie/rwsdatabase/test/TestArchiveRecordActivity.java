@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by xupen on 2016/8/28.
  */
-public class MainActivity extends Activity {
+public class TestArchiveRecordActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

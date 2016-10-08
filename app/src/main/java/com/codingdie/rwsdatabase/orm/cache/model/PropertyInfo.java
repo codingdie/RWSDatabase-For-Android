@@ -2,6 +2,8 @@ package com.codingdie.rwsdatabase.orm.cache.model;
 
 import com.codingdie.rwsdatabase.orm.cache.ClassCache;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by xupen on 2016/9/28.
  */
@@ -11,6 +13,7 @@ public class PropertyInfo {
     private String name;
     private int type=-1;
     private String collectionItemClass;
+    private Field field;
 
     private boolean isKey;
     private String[] alias;
@@ -66,8 +69,6 @@ public class PropertyInfo {
             this.type=PROPERTYTYPE_FLOAT;
         }else    if(typeStr.equals(propertyTypeStrs[10])){
             this.type=PROPERTYTYPE_DOUBLE;
-        }else if(typeStr.startsWith("class ")){
-            this.type=PROPERTYTYPE_OBJECT;
         } else if(typeStr.startsWith("java.util.List<")){
             try {
                 collectionItemClass=Class.forName(typeStr.substring(15,typeStr.length()-1)).toString();
@@ -78,8 +79,15 @@ public class PropertyInfo {
         }
     }
 
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
+
     public static boolean  checkFieldCanOrm(String typeStr) {
-        System.out.println(typeStr);
         if(typeStr.equals(propertyTypeStrs[0])){
              return  true;
         }else    if(typeStr.equals(propertyTypeStrs[1])){
@@ -102,15 +110,37 @@ public class PropertyInfo {
             return  true;
         }else    if(typeStr.equals(propertyTypeStrs[10])){
             return  true;
-        }else if(typeStr.startsWith("class ")){
-            return  true;
-        } else if(typeStr.startsWith("java.util.List<")){
+        }else if(typeStr.startsWith("java.util.List<")){
             try {
                 Class.forName(typeStr.substring(15,typeStr.length()-1));
                 return  true;
             }catch (Exception ex){
                 return  false;
             }
+        }
+        return  false;
+    }
+    public static boolean  checkFieldIsNum(String typeStr) {
+        if(typeStr.equals(propertyTypeStrs[0])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[1])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[2])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[3])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[4])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[6])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[7])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[8])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[9])){
+            return  true;
+        }else    if(typeStr.equals(propertyTypeStrs[10])){
+            return  true;
         }
         return  false;
     }

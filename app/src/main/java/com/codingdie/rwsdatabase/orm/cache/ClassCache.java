@@ -2,6 +2,7 @@ package com.codingdie.rwsdatabase.orm.cache;
 
 import android.util.LruCache;
 import com.codingdie.rwsdatabase.orm.cache.model.ClassInfo;
+import com.codingdie.rwsdatabase.orm.util.ReflectUtil;
 
 /**
  * Created by xupen on 2016/9/28.
@@ -20,6 +21,13 @@ public class ClassCache  extends  LruCache<Class,ClassInfo>{
         }
        return instance;
     }
-
+    public ClassInfo getClassInfo(Class aClass){
+        ClassInfo classInfo = get(aClass);
+        if(classInfo ==null){
+            classInfo= ClassInfo.newInstance(aClass);
+            put(aClass,classInfo);
+        }
+        return  classInfo;
+    }
 
 }

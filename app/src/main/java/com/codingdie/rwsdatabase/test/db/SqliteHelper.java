@@ -1,4 +1,4 @@
-package com.codingdie.rwsdatabase.test;
+package com.codingdie.rwsdatabase.test.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

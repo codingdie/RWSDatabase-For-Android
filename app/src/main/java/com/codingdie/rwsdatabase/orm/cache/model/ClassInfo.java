@@ -1,5 +1,8 @@
 package com.codingdie.rwsdatabase.orm.cache.model;
 
+import com.codingdie.rwsdatabase.orm.util.ReflectUtil;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,8 +10,19 @@ import java.util.List;
  */
 public class ClassInfo {
 
-    private List<PropertyInfo> properties;
-    private List<Integer> keyPropertyIndexes;
+    private List<PropertyInfo> properties=new ArrayList<PropertyInfo>();
+    private List<Integer> keyPropertyIndexes=new ArrayList<Integer>();
+
+    public List<PropertyInfo> getNotArrayProperties() {
+      List<PropertyInfo> propertyInfos=new ArrayList<PropertyInfo>();
+        for(int i=0;i<properties.size();i++){
+            if(properties.get(i).getType()==PropertyInfo.PROPERTYTYPE_COLLECTION){
+                continue;
+            }
+            propertyInfos.add(properties.get(i));
+        }
+        return propertyInfos;
+    }
 
     public List<PropertyInfo> getProperties() {
         return properties;
@@ -24,5 +38,15 @@ public class ClassInfo {
 
     public void setKeyPropertyIndexes(List<Integer> keyPropertyIndexes) {
         this.keyPropertyIndexes = keyPropertyIndexes;
+    }
+    public static ClassInfo newInstance(Class aClass){
+        ClassInfo classInfo=new ClassInfo();
+        classInfo.setProperties(ReflectUtil.getAllProperty(aClass));
+        for(int i=0;i<classInfo.getProperties().size();i++){
+            if(classInfo.getProperties().get(i).isKey()){
+                classInfo.getKeyPropertyIndexes().add(i);
+            }
+        }
+        return  classInfo;
     }
 }

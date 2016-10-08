@@ -1,4 +1,4 @@
-package com.codingdie.rwsdatabase.test;
+package com.codingdie.rwsdatabase.test.db;
 
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/RWSDatabase.iml" filepath="$PROJECT_DIR$/.idea/modules/RWSDatabase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/RWSDatabase-For-Android.iml" filepath="$PROJECT_DIR$/.idea/modules/RWSDatabase-For-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" />
     </modules>
   </component>

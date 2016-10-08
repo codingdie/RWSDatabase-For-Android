@@ -14,6 +14,8 @@ import com.codingdie.rwsdatabase.RWSDatabaseManager;
 import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.log.LogUtil;
+import com.codingdie.rwsdatabase.test.db.SqliteHelper;
+import com.codingdie.rwsdatabase.test.db.VersionManager;
 
 import java.io.File;
 import java.util.Timer;
