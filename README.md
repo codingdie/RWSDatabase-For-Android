@@ -68,8 +68,8 @@ public class VersionManager {
   
  
  ```  
- 2 simply query and write  with sql(no orm)
-   sql查询写入(非orm)
+ 2 simply query and write  with sql(no orm)  
+ sql查询写入(非orm)
  ``` 
   //read/query
   ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
