@@ -68,8 +68,24 @@ public class VersionManager {
   
  
  ```  
- 2 simply query  
-   简单查询  
- ```
- 
+ 2 simply query and write  with sql(no orm)
+   sql查询写入(非orm)
+ ``` 
+      //read/query
+      ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
+      Cursor cursor = readableConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
+      cursor.moveToNext();
+      final long sum=cursor.getInt(0);
+      cursor.close();
+      rwsDatabaseManager.releaseReadableDatabase(readableConnection); 
+      
+      //write
+       WritableConnection writableConnection=rwsDatabaseManager.getWritableConnection();
+       writableConnection.beginTransaction();//开始事务
+       
+       writableConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+
+       writableConnection.setTransactionSuccessful();
+       writableConnection.endTransaction();;//结束事务
+       rwsDatabaseManager.releaseWritableConnection();
  ```
