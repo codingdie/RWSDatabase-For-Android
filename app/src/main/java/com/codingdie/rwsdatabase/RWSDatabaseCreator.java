@@ -1,6 +1,7 @@
 package com.codingdie.rwsdatabase;
 
 import android.content.Context;
+import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
 /**
  * Created by xupen on 2016/8/25.
@@ -11,14 +12,14 @@ public class RWSDatabaseCreator {
     private  Class versionManager;
     private  int connectionPoolSize =5;
     private  Context context;
-
+    private UpgradeDatabaseListener upgradeDatabaseListener;
     public RWSDatabaseCreator(Context context) {
         this.context = context;
     }
 
     public    RWSDatabaseManager  create( ){
         RWSDatabaseManager rwsDatabaseManager=new RWSDatabaseManager();
-        rwsDatabaseManager.init(dbPath,version,versionManager, connectionPoolSize);
+        rwsDatabaseManager.init(dbPath,version,versionManager, connectionPoolSize,upgradeDatabaseListener ,context);
         return  rwsDatabaseManager;
      }
 
@@ -45,6 +46,10 @@ public class RWSDatabaseCreator {
 
     public RWSDatabaseCreator connectionPoolSize(int connectionPoolSize) {
         this.connectionPoolSize = connectionPoolSize;
+        return this;
+    }
+    public RWSDatabaseCreator addUpgradeDatabaseListener(UpgradeDatabaseListener upgradeDatabaseListener) {
+        this.upgradeDatabaseListener = upgradeDatabaseListener;
         return this;
     }
 }

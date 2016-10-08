@@ -16,6 +16,7 @@ import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.log.LogUtil;
 import com.codingdie.rwsdatabase.test.db.SqliteHelper;
 import com.codingdie.rwsdatabase.test.db.VersionManager;
+import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
 import java.io.File;
 import java.util.Timer;
@@ -29,6 +30,8 @@ public class MultipleReadActivity extends Activity {
     private TextView time;
     private EditText poolSize;
     private EditText dbSize;
+    private EditText progressEdit;
+
     private Button button;
     private int count1 = 0;
     private int count2 = 0;
@@ -54,6 +57,7 @@ public class MultipleReadActivity extends Activity {
         dbSize=(EditText)findViewById(R.id.dbSize);
         button=(Button)findViewById(R.id.control);
         time = (TextView) findViewById(R.id.time);
+        progressEdit =(EditText)findViewById(R.id.proress);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +70,24 @@ public class MultipleReadActivity extends Activity {
                      rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this) //context
                                                     .databaseName("test1")                      //dbname
                                                     .versionManager(VersionManager.class)       //versionmanager 版本管理器
-                                                    .version(2)                                  //version 版本
+                                                    .version(4).addUpgradeDatabaseListener(new UpgradeDatabaseListener() {
+                                 @Override
+                                 public void beginUpgrade() {
+
+                                 }
+
+                                 @Override
+                                 public void endUpgrade() {
+
+                                 }
+
+                                 @Override
+                                 public void progress(double progress) {
+                                     LogUtil.log("progress:"+progress);
+
+                                     progressEdit.setText(String.valueOf(progress));
+                                 }
+                             })                                 //version 版本
                                                     .connectionPoolSize(20)                      //connectionPoolSize 连接池大小
                                                     .create();
                      SQLiteDatabase sqLiteDatabase=  sqliteHelper.getWritableDatabase();
@@ -143,7 +164,7 @@ public class MultipleReadActivity extends Activity {
                         Cursor cursor = sqLiteDatabase.rawQuery("select sum(studentId)  from Student ", new String[]{});
                         cursor.moveToNext();
                         final long sum=cursor.getInt(0);
-                        LogUtil.log("2:"+sum);
+//                        LogUtil.log("2:"+sum);
 
                         cursor.close();
                         count2++;
@@ -171,7 +192,7 @@ public class MultipleReadActivity extends Activity {
                         Cursor cursor = writableSQLiteConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
                         cursor.moveToNext();
                         final long sum=cursor.getInt(0);
-                        LogUtil.log("1:"+sum);
+//                        LogUtil.log("1:"+sum);
                         cursor.close();
                         rwsDatabaseManager.releaseReadableDatabase(writableSQLiteConnection);
                         count1++;

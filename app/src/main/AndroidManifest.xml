@@ -13,14 +13,16 @@
             android:theme="@style/AppTheme">
         <activity android:name=".test.TestArchiveRecordActivity">
         </activity>
-        <activity android:name=".test.MultipleReadActivity"/>
-        <activity android:name=".test.MultipleReadAndWrite"/>
-        <activity android:name=".test.TestOrmActivity">
+        <activity android:name=".test.MultipleReadActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".test.MultipleReadAndWrite"/>
+        <activity android:name=".test.TestOrmActivity">
+
         </activity>
     </application>
 

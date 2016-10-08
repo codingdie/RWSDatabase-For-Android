@@ -1,8 +1,10 @@
 package com.codingdie.rwsdatabase.version;
 
+import android.os.Handler;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.log.LogUtil;
 import com.codingdie.rwsdatabase.version.exception.VersionException;
+import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 import com.codingdie.rwsdatabase.version.imp.VersionControllerImp;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +15,7 @@ import java.lang.reflect.Method;
  */
 public class VersionController implements VersionControllerImp {
     @Override
-    public void createOrUpgradeDatabase(int versionFinal, Class versionManagerClass, WritableConnection db) {
+    public void createOrUpgradeDatabase(int versionFinal, Class versionManagerClass, WritableConnection db,final UpgradeDatabaseListener upgradeDatabaseListener,Handler mainHandler) {
         try {
             db.beginTransaction();
             Object versionManager=versionManagerClass.newInstance();
@@ -26,11 +28,41 @@ public class VersionController implements VersionControllerImp {
                 LogUtil.log("maxVersionForMethod:"+versionBegin);
                 createDatabase(db,versionManager, versionBegin);
             }
-            for (int i=versionBegin;i<versionFinal;i++){
-                upgradeDatabase(db,versionManager,i,i+1);
+            if(versionFinal>versionBegin){
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        upgradeDatabaseListener.beginUpgrade();
+                        upgradeDatabaseListener.progress(0.0);
+                    }
+                });
             }
+            for (int i=versionBegin;i<versionFinal;i++){
+                LogUtil.log("versionNow:"+i);
+
+                upgradeDatabase(db,versionManager,i,i+1);
+                final   double progress = ((i + 1 - versionBegin) * 1.0) / (versionFinal - versionBegin);
+
+                if(upgradeDatabaseListener!=null){
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            upgradeDatabaseListener.progress(progress);
+                        }
+                    });
+                }
+            }
+
             db.setTransactionSuccessful();
             db.setVersion(versionFinal);
+            if(versionFinal>versionBegin){
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        upgradeDatabaseListener.endUpgrade();
+                    }
+                });
+            }
         } catch (VersionException e){
              throw e;
         }catch (Exception e){

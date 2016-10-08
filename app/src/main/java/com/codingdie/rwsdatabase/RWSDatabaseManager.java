@@ -1,11 +1,14 @@
 package com.codingdie.rwsdatabase;
 
+import android.content.Context;
+import android.os.Handler;
 import com.codingdie.rwsdatabase.connection.Imp.InitSQLiteDatabaseImp;
 import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.codingdie.rwsdatabase.connection.SQLConnectionPoolManager;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.connection.model.InitSQLiteConnectionPoolConfig;
 import com.codingdie.rwsdatabase.version.VersionController;
+import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -18,11 +21,14 @@ public class RWSDatabaseManager {
     private ReentrantLock initLock=new ReentrantLock();
     private Condition initLockCondition=initLock.newCondition();
     private  boolean initFlag=false;
-    public void  init(final String dbPath,final int version,final Class versionManager,final int maxConnectionCount){
+    private Handler mainHandler;
+    public void  init(final String dbPath, final int version, final Class versionManager, final int maxConnectionCount,final UpgradeDatabaseListener upgradeDatabaseListener,  final Context context){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 initLock.lock();
+                 mainHandler =new Handler(context.getMainLooper());
+
                 InitSQLiteConnectionPoolConfig initSQLiteConnectionPoolConfig=new InitSQLiteConnectionPoolConfig();
                 initSQLiteConnectionPoolConfig.setMaxCount(maxConnectionCount);
                 initSQLiteConnectionPoolConfig.setDbPath(dbPath);
@@ -32,7 +38,7 @@ public class RWSDatabaseManager {
                     @Override
                     public void initDatabase(WritableConnection sqLiteConnection) {
                         VersionController versionController=new VersionController();
-                        versionController.createOrUpgradeDatabase(version, versionManager,sqLiteConnection);
+                        versionController.createOrUpgradeDatabase(version, versionManager,sqLiteConnection,upgradeDatabaseListener, mainHandler);
                         initFlag=true;
                         initLockCondition.signalAll();
                         initLock.unlock();
@@ -42,6 +48,7 @@ public class RWSDatabaseManager {
         }).start();
 
     }
+
     public ReadableConnection getReadableDatabase(){
      return  (ReadableConnection)execAfterInit(new AfterInitOperator() {
             @Override
@@ -79,6 +86,7 @@ public class RWSDatabaseManager {
             }
         });
     }
+
     public void releaseWritableConnection(){
         execAfterInit(new AfterInitOperator() {
             @Override
@@ -111,6 +119,7 @@ public class RWSDatabaseManager {
         return object;
 
     }
+
     private interface AfterInitOperator {
         public Object exec();
     }

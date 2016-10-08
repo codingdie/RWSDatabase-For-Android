@@ -65,5 +65,7 @@
               android:id="@+id/dbSize"
 
               android:inputType="number" android:text="1000"/>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center"
+              android:id="@+id/proress" android:inputType="text" android:text="1000" android:layout_gravity="right"/>
     <Button android:layout_width="match_parent" android:layout_height="40dp" android:id="@+id/control" android:text="begin test"/>
 </LinearLayout>
