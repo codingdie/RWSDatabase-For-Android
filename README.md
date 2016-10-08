@@ -28,9 +28,9 @@ Generally speaking, this framework is to solve the problem of building large-sca
 将此git工程作为Android Library引入
 
 3,import with gradle(TODO)  
-gradle引入(待做)
+gradle引入(待做)  
 
-
+4,源码引进(非test目录)
 
 ##Simple Usage
 1,create or upgrade the database  and get the databasemanager  
