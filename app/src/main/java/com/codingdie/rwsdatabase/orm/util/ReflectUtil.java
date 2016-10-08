@@ -128,7 +128,6 @@ public class ReflectUtil {
                 }else{
                      Number avalue= (Number) field.get(a);
                      Number bvalue= (Number) field.get(b);
-                     Long
                      if((avalue==null&&bvalue!=null)||(avalue!=null&&bvalue==null)||(avalue!=null&&bvalue!=null&&!avalue.equals(bvalue))){
                          flag=false;
                      }
