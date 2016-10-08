@@ -26,7 +26,7 @@ public class RWSDatabaseManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                initLock.lock();
+                 initLock.lock();
                  mainHandler =new Handler(context.getMainLooper());
 
                 InitSQLiteConnectionPoolConfig initSQLiteConnectionPoolConfig=new InitSQLiteConnectionPoolConfig();

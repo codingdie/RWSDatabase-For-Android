@@ -29,13 +29,15 @@ public class VersionController implements VersionControllerImp {
                 createDatabase(db,versionManager, versionBegin);
             }
             if(versionFinal>versionBegin){
-                mainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        upgradeDatabaseListener.beginUpgrade();
-                        upgradeDatabaseListener.progress(0.0);
-                    }
-                });
+                if(upgradeDatabaseListener!=null) {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            upgradeDatabaseListener.beginUpgrade();
+                            upgradeDatabaseListener.progress(0.0);
+                        }
+                    });
+                }
             }
             for (int i=versionBegin;i<versionFinal;i++){
                 LogUtil.log("versionNow:"+i);
@@ -56,12 +58,15 @@ public class VersionController implements VersionControllerImp {
             db.setTransactionSuccessful();
             db.setVersion(versionFinal);
             if(versionFinal>versionBegin){
-                mainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        upgradeDatabaseListener.endUpgrade();
-                    }
-                });
+                if(upgradeDatabaseListener!=null) {
+
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            upgradeDatabaseListener.endUpgrade();
+                        }
+                    });
+                }
             }
         } catch (VersionException e){
              throw e;
