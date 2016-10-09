@@ -1,6 +1,9 @@
 package com.codingdie.rwsdatabase;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import com.codingdie.rwsdatabase.connection.ReadableConnection;
+import com.codingdie.rwsdatabase.connection.SQLiteConnection;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
 /**
@@ -23,6 +26,20 @@ public class RWSDatabaseCreator {
         return  rwsDatabaseManager;
      }
 
+    public static   boolean checkNeedUpgrdadeDatabase(String dbName,int curVersion,Context context){
+        return  checkNeedUpgrdadeDatabaseInPath(context.getDatabasePath(dbName).getAbsolutePath(),curVersion,context);
+    }
+
+    public static   boolean checkNeedUpgrdadeDatabaseInPath(String path,int curVersion,Context context){
+        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.CREATE_IF_NECESSARY);
+        boolean flag=false;
+        flag= sqLiteDatabase.needUpgrade(curVersion);
+        if(sqLiteDatabase.getVersion()==0&&curVersion==1){
+            flag=false;
+        }
+        sqLiteDatabase.close();
+        return  flag;
+    }
 
     public RWSDatabaseCreator databasePath(String dbPath) {
         this.dbPath = dbPath;
