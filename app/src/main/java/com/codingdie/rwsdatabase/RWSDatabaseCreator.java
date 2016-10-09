@@ -48,6 +48,7 @@ public class RWSDatabaseCreator {
     }
 
     public RWSDatabaseCreator databaseName(String name) {
+        context.getDatabasePath(name).getParentFile().mkdirs();
         this.dbPath = context.getDatabasePath(name).getAbsolutePath();
         return this;
     }
