@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by xupen on 2016/8/22.
  */
-public class SQLiteConnection {
+public class SQLiteConnection   {
     protected boolean inUsing = false;
     protected boolean isWritable = false;
     protected int index;
@@ -64,6 +64,7 @@ public class SQLiteConnection {
     public int getVersion() {
         return this.sqLiteDatabase.getVersion();
     }
+
     public Cursor execReadSQL(String sql , String[] param){
         return   this.sqLiteDatabase.rawQuery(sql ,param);
     }

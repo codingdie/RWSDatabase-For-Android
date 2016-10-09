@@ -1,5 +1,7 @@
 package com.codingdie.rwsdatabase.connection;
 
+import android.content.ContentValues;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -9,13 +11,28 @@ public class WritableConnection extends SQLiteConnection {
     public void execWriteSQL(String sql, Object[] param) {
         this.sqLiteDatabase.execSQL(sql, param);
     }
+
     public void execWriteSQL(String sql) {
         this.sqLiteDatabase.execSQL(sql);
     }
 
+    public  int update(String table, ContentValues values, String whereClause, String[] whereArgs) {
+        return     this.sqLiteDatabase.update(table,values,whereClause,whereArgs);
+    }
+
+    public long insertOrThrow(String table, String nullColumnHack, ContentValues values)
+            throws SQLException {
+        return  this.sqLiteDatabase.insertOrThrow(table,nullColumnHack,values);
+    }
+
+    //TODO
+    @Deprecated
+    public void insertObjectIntoTable(Object object,String tableName) {
+
+    }
+
     public void beginTransaction() {
         this.sqLiteDatabase.beginTransaction();
-
     }
 
     public void endTransaction() {
@@ -25,7 +42,8 @@ public class WritableConnection extends SQLiteConnection {
     public void setTransactionSuccessful() {
         this.sqLiteDatabase.setTransactionSuccessful();
     }
-     static WritableConnection createWritableConnection(String dbPath, int index) {
+
+    static WritableConnection createWritableConnection(String dbPath, int index) {
          WritableConnection writableConnection = new WritableConnection();
         writableConnection.setInUsing(false);
         writableConnection.setWritable(true);
@@ -42,11 +60,5 @@ public class WritableConnection extends SQLiteConnection {
     }
 
 
-    //TODO
-    @Deprecated
-    public void insertObjectIntoTable(Object object,String tableName) {
-
-
-    }
 
 }
