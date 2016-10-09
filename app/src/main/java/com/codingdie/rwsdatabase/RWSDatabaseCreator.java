@@ -6,6 +6,8 @@ import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.codingdie.rwsdatabase.connection.SQLiteConnection;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
+import java.io.File;
+
 /**
  * Created by xupen on 2016/8/25.
  */
@@ -32,7 +34,15 @@ public class RWSDatabaseCreator {
     }
 
     public static   boolean checkNeedUpgrdadeDatabaseInPath(String path,int curVersion,Context context){
+        File file=new File(path);
+        if(!file.exists()){
+            return  false;
+        }
         SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.CREATE_IF_NECESSARY);
+        if(!sqLiteDatabase.isOpen()){
+            return false;
+        }
+
         boolean flag=false;
         flag= sqLiteDatabase.needUpgrade(curVersion);
         if(sqLiteDatabase.getVersion()==0&&curVersion==1){
