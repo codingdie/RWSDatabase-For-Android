@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
  * Created by xupen on 2016/8/26.
  */
 public class WritableConnection extends SQLiteConnection {
+
     public void execWriteSQL(String sql, Object[] param) {
         this.sqLiteDatabase.execSQL(sql, param);
     }
@@ -17,12 +18,16 @@ public class WritableConnection extends SQLiteConnection {
     }
 
     public  int update(String table, ContentValues values, String whereClause, String[] whereArgs) {
-        return     this.sqLiteDatabase.update(table,values,whereClause,whereArgs);
+        return  this.sqLiteDatabase.update(table,values,whereClause,whereArgs);
     }
 
-    public long insertOrThrow(String table, String nullColumnHack, ContentValues values)
+    public long insert(String table, String nullColumnHack, ContentValues values)
             throws SQLException {
         return  this.sqLiteDatabase.insertOrThrow(table,nullColumnHack,values);
+    }
+
+    public int  delete(String table, String whereClause, String[] whereArgs) {
+        return  this.sqLiteDatabase.delete(table,whereClause,whereArgs);
     }
 
     //TODO
