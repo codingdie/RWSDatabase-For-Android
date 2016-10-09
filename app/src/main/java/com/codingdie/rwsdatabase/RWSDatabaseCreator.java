@@ -16,11 +16,12 @@ public class RWSDatabaseCreator {
     private  int connectionPoolSize =5;
     private  Context context;
     private UpgradeDatabaseListener upgradeDatabaseListener;
+
     public RWSDatabaseCreator(Context context) {
         this.context = context;
     }
 
-    public    RWSDatabaseManager  create( ){
+    public  RWSDatabaseManager  create( ){
         RWSDatabaseManager rwsDatabaseManager=new RWSDatabaseManager();
         rwsDatabaseManager.init(dbPath,version,versionManager, connectionPoolSize,upgradeDatabaseListener ,context);
         return  rwsDatabaseManager;
@@ -45,11 +46,11 @@ public class RWSDatabaseCreator {
         this.dbPath = dbPath;
         return this;
     }
+
     public RWSDatabaseCreator databaseName(String name) {
         this.dbPath = context.getDatabasePath(name).getAbsolutePath();
         return this;
     }
-
 
     public RWSDatabaseCreator version(int version) {
         this.version = version;
@@ -65,6 +66,7 @@ public class RWSDatabaseCreator {
         this.connectionPoolSize = connectionPoolSize;
         return this;
     }
+
     public RWSDatabaseCreator addUpgradeDatabaseListener(UpgradeDatabaseListener upgradeDatabaseListener) {
         this.upgradeDatabaseListener = upgradeDatabaseListener;
         return this;

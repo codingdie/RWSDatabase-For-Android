@@ -48,8 +48,13 @@ public class WritableConnection extends SQLiteConnection {
         this.sqLiteDatabase.setTransactionSuccessful();
     }
 
-    static WritableConnection createWritableConnection(String dbPath, int index) {
-         WritableConnection writableConnection = new WritableConnection();
+
+    public void setVersion(int version) {
+        this.sqLiteDatabase.setVersion(version);
+    }
+
+    protected  static WritableConnection createWritableConnection(String dbPath, int index) {
+        WritableConnection writableConnection = new WritableConnection();
         writableConnection.setInUsing(false);
         writableConnection.setWritable(true);
         writableConnection.setIndex(index);
@@ -58,12 +63,6 @@ public class WritableConnection extends SQLiteConnection {
         writableConnection.setSqLiteDatabase(sqLiteDatabase);
         return writableConnection;
     }
-
-
-    public void setVersion(int version) {
-        this.sqLiteDatabase.setVersion(version);
-    }
-
 
 
 }

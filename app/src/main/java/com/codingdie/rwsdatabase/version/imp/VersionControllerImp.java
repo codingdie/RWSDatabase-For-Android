@@ -10,5 +10,4 @@ public interface VersionControllerImp {
 
     public  void createOrUpgradeDatabase(int version, Class versionManaer, WritableConnection db,UpgradeDatabaseListener upgradeDatabaseListener,Handler mainHandler);
 
-
 }

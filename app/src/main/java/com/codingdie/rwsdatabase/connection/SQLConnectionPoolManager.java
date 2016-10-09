@@ -82,6 +82,7 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
             }
         });
     }
+
     private WritableConnection getWriteConnectionAfterInit() {
         try {
             writeConnectionLock.lock();
@@ -172,7 +173,6 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
         });
     }
 
-
     @Override
     public void initConnnectionPool(InitSQLiteConnectionPoolConfig connectionPoolConfig, InitSQLiteDatabaseImp initSQLiteDatabaseImp) {
         versionControlLock.lock();
@@ -213,12 +213,12 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
 
     }
 
-
     private void log(String log) {
         if (openLog) {
             LogUtil.log(log);
         }
     }
+
     public void openLog(boolean openFlag) {
         this.openLog = openFlag;
     }

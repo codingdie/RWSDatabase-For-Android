@@ -78,7 +78,6 @@ public class VersionController implements VersionControllerImp {
         }
     }
 
-
     private void upgradeDatabase(WritableConnection db, Object versionManager, int versionBegin, int versionEnd) throws InvocationTargetException, IllegalAccessException {
         try {
             String methodName=String.format("version%dToVersion%d",versionBegin,versionEnd);
@@ -88,6 +87,7 @@ public class VersionController implements VersionControllerImp {
             throw  new VersionException(String.format(VersionException.NO_UPGRADE_METHOD,versionBegin,versionEnd));
         }
     }
+
     private void createDatabase(WritableConnection db, Object versionManager, int version) throws InvocationTargetException, IllegalAccessException {
         try {
             if(version==1){
@@ -103,6 +103,7 @@ public class VersionController implements VersionControllerImp {
             throw  new VersionException(String.format(VersionException.NO_CREATE_METHOD,version));
         }
     }
+
     private int getMaxVersionForMethodToCreateDatabase(Class versionManagerClass) {
         try {
             int maxVersion=1;

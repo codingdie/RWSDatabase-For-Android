@@ -22,6 +22,7 @@ public class RWSDatabaseManager {
     private Condition initLockCondition=initLock.newCondition();
     private  boolean initFlag=false;
     private Handler mainHandler;
+
     public void  init(final String dbPath, final int version, final Class versionManager, final int maxConnectionCount,final UpgradeDatabaseListener upgradeDatabaseListener,  final Context context){
         new Thread(new Runnable() {
             @Override

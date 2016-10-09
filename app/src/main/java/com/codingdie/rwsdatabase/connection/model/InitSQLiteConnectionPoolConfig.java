@@ -9,7 +9,6 @@ public class InitSQLiteConnectionPoolConfig {
     private int  maxCount;
     private String dbPath;
 
-
     public int getMaxCount() {
         return maxCount;
     }

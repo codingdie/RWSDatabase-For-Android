@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
  * Created by xupen on 2016/8/26.
  */
 public class ReadableConnection extends  SQLiteConnection {
+
     protected static ReadableConnection createReadableConnection(String dbPath, int index) {
         ReadableConnection readableConnection = new ReadableConnection();
         readableConnection.setInUsing(false);
