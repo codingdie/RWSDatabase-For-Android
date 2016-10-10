@@ -87,15 +87,16 @@ public class RWSDatabaseCreator {
     private String getDataBasePath() {
         String finalDBPath="";
         if(dbPath!=null&&!dbPath.equals("")){
+
             File file=new File(dbPath);
-            file.delete();
-            file.mkdirs();
-            if(!file.isDirectory()){
+            finalDBPath=file.getAbsolutePath()+File.separator+dbName+".sqlite";
+            File dbFile = new File(finalDBPath);
+            dbFile.mkdirs();
+            if(!dbFile.getParentFile().exists()){
                 throw new RWSDatabaseException(RWSDatabaseException.PATH_ERROR);
             }
-            finalDBPath=file.getAbsolutePath()+File.separator+dbName+".sqlite";
         }else{
-            context.getDatabasePath(dbName).getParentFile().mkdirs();
+            context.getDatabasePath(dbName).mkdirs();
             finalDBPath= context.getDatabasePath(dbName).getAbsolutePath();
         }
         return finalDBPath;
