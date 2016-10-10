@@ -88,6 +88,7 @@ public class RWSDatabaseCreator {
         String finalDBPath="";
         if(dbPath!=null&&!dbPath.equals("")){
             File file=new File(dbPath);
+            file.delete();
             file.mkdirs();
             if(!file.isDirectory()){
                 throw new RWSDatabaseException(RWSDatabaseException.PATH_ERROR);
