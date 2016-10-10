@@ -2,8 +2,7 @@ package com.codingdie.rwsdatabase;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import com.codingdie.rwsdatabase.connection.ReadableConnection;
-import com.codingdie.rwsdatabase.connection.SQLiteConnection;
+import com.codingdie.rwsdatabase.exception.RWSDatabaseException;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
 import java.io.File;
@@ -13,6 +12,8 @@ import java.io.File;
  */
 public class RWSDatabaseCreator {
     private  String dbPath;
+    private  String dbName;
+
     private  int version=1;
     private  Class versionManager;
     private  int connectionPoolSize =5;
@@ -25,9 +26,10 @@ public class RWSDatabaseCreator {
 
     public  RWSDatabaseManager  create( ){
         RWSDatabaseManager rwsDatabaseManager=new RWSDatabaseManager();
-        rwsDatabaseManager.init(dbPath,version,versionManager, connectionPoolSize,upgradeDatabaseListener ,context);
+        rwsDatabaseManager.init(getDataBasePath(),version,versionManager, connectionPoolSize,upgradeDatabaseListener ,context);
         return  rwsDatabaseManager;
      }
+
 
     public static   boolean checkNeedUpgrdadeDatabase(String dbName,int curVersion,Context context){
         return  checkNeedUpgrdadeDatabaseInPath(context.getDatabasePath(dbName).getAbsolutePath(),curVersion,context);
@@ -58,8 +60,7 @@ public class RWSDatabaseCreator {
     }
 
     public RWSDatabaseCreator databaseName(String name) {
-        context.getDatabasePath(name).getParentFile().mkdirs();
-        this.dbPath = context.getDatabasePath(name).getAbsolutePath();
+        this.dbName=name;
         return this;
     }
 
@@ -82,4 +83,21 @@ public class RWSDatabaseCreator {
         this.upgradeDatabaseListener = upgradeDatabaseListener;
         return this;
     }
+
+    private String getDataBasePath() {
+        String finalDBPath="";
+        if(dbPath!=null&&!dbPath.equals("")){
+            File file=new File(dbPath);
+            file.mkdirs();
+            if(!file.isDirectory()){
+                throw new RWSDatabaseException(RWSDatabaseException.PATH_ERROR);
+            }
+            finalDBPath=file.getAbsolutePath()+File.separator+dbName+".sqlite";
+        }else{
+            context.getDatabasePath(dbName).getParentFile().mkdirs();
+            finalDBPath= context.getDatabasePath(dbName).getAbsolutePath();
+        }
+        return finalDBPath;
+    }
+
 }
