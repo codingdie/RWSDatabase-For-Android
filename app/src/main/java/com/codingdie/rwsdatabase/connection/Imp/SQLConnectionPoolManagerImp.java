@@ -15,6 +15,10 @@ public  interface SQLConnectionPoolManagerImp {
 
     public  void releaseWritableConnection();
 
+    public  int getRestReadableConnectionCount();
+
+    public  int getRestWritableConnectionCount();
+
     public  void sheduleCheck();
 
     public  void releaseReadConnection(ReadableConnection SQLiteConnection);

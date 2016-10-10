@@ -91,12 +91,12 @@ public class RWSDatabaseCreator {
             File file=new File(dbPath);
             finalDBPath=file.getAbsolutePath()+File.separator+dbName+".sqlite";
             File dbFile = new File(finalDBPath);
-            dbFile.mkdirs();
+            dbFile.getParentFile().mkdirs();
             if(!dbFile.getParentFile().exists()){
                 throw new RWSDatabaseException(RWSDatabaseException.PATH_ERROR);
             }
         }else{
-            context.getDatabasePath(dbName).mkdirs();
+            context.getDatabasePath(dbName).getParentFile().mkdirs();
             finalDBPath= context.getDatabasePath(dbName).getAbsolutePath();
         }
         return finalDBPath;

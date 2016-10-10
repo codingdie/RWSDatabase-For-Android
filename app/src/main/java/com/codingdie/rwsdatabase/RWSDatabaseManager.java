@@ -98,6 +98,23 @@ public class RWSDatabaseManager {
         });
     }
 
+    public  int getRestReadableConnectionCount() {
+        return (Integer) execAfterInit(new AfterInitOperator() {
+            @Override
+            public Object exec() {
+              return    connectionPoolManager.getRestReadableConnectionCount();
+            }
+        });
+    }
+    public  int getRestWritableConnectionCount() {
+        return (Integer) execAfterInit(new AfterInitOperator() {
+            @Override
+            public Object exec() {
+                return  connectionPoolManager.getRestWritableConnectionCount();
+            }
+        });
+    }
+
     private Object execAfterInit(AfterInitOperator afterInitOperator) {
         Object object=null;
         try {

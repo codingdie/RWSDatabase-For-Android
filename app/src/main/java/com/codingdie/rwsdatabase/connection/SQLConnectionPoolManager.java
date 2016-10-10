@@ -126,6 +126,36 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
         });
     }
 
+    @Override
+    public int getRestReadableConnectionCount() {
+        return (Integer) execAfterInit(new AfterInitOperator() {
+            @Override
+            public Object exec() {
+                Integer count=0;
+                for (int i = 0; i < readConnectionsPool.size(); i++) {
+                    if (readConnectionsPool.get(i).isInUsing() == false) {
+                        count++;
+                    }
+                }
+                return count;
+            }
+        });
+    }
+
+    @Override
+    public int getRestWritableConnectionCount() {
+        return (Integer) execAfterInit(new AfterInitOperator() {
+            @Override
+            public Object exec() {
+                if(writeConnection.isInUsing()==false){
+                    return  1;
+                }else{
+                    return 0;
+                }
+            }
+        });
+    }
+
     private Object execAfterInit(AfterInitOperator afterInitOperator) {
         Object object=null;
         try {
