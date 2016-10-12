@@ -76,12 +76,12 @@ public class SQLiteConnection   {
         return   this.sqLiteDatabase.query(table ,columns,selection,selectionArgs,groupBy,having,orderBy,limit);
     }
 
-    public <T> T queryObject(String sql , String[] param,Class<T> tClass,List<String>... ignoreProps){
-        return CursorResultReflectUtil.toObject(this.execReadSQL(sql,param),tClass);
+    public <T> T queryObject(String sql , String[] param,Class<T> tClass,String[]... ignoreProps){
+        return CursorResultReflectUtil.toObject(this.execReadSQL(sql,param),tClass,ignoreProps);
     }
 
-    public List queryObjectList(String sql , String[] param, Class tClass,List<String>... ignoreProps){
-        return CursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass);
+    public <E> List<E> queryObjectList(String sql , String[] param, Class<E> tClass,String[]... ignoreProps){
+        return CursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass,ignoreProps);
     }
 
 

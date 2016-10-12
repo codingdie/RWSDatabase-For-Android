@@ -1,6 +1,7 @@
 package com.codingdie.rwsdatabase.orm;
 
 import android.database.Cursor;
+
 import com.codingdie.rwsdatabase.orm.cache.ClassCache;
 import com.codingdie.rwsdatabase.orm.cache.model.ClassInfo;
 import com.codingdie.rwsdatabase.orm.cache.model.PropertyInfo;
@@ -15,12 +16,12 @@ import java.util.List;
  */
 public class CursorResultReflectUtil {
 
-    public static <T> T toObject(Cursor cursor, Class<T> tClass,List<String>... ignoreProps) {
+    public static <T> T toObject(Cursor cursor, Class<T> tClass,String[]... ignoreProps) {
         try {
             if (cursor.getCount() > 0) {
-                Object objFinal=null;
+                T objFinal=null;
                 while(cursor.moveToNext()){
-                    Object tmp=fillOneObject(cursor,tClass);
+                	 T tmp=fillOneObject(cursor,tClass);
                     if(objFinal==null){
                         objFinal=tmp;
                     }else{
@@ -32,7 +33,7 @@ public class CursorResultReflectUtil {
                     }
                 }
                 cursor.close();
-                return  (T)objFinal;
+                return  objFinal;
             } else {
                 return null;
             }
@@ -41,12 +42,12 @@ public class CursorResultReflectUtil {
             return null;
         }
     }
-    public static <T> T  toList(Cursor cursor, Class tClass){
-        List list=new ArrayList();
+    public static <E> List<E>  toList(Cursor cursor, Class<E> tClass,String[]... ignoreProps){
+        List<E> list=new ArrayList<E>();
         try {
-            Object obj=null;
+            E obj=null;
             while(cursor.moveToNext()){
-                Object tmp=fillOneObject(cursor,tClass);
+                E tmp=fillOneObject(cursor,tClass);
                 if(obj==null){
                     obj=tmp;
                     list.add(obj);
@@ -58,10 +59,10 @@ public class CursorResultReflectUtil {
                     addArrayPropertyFromBToA(obj,tmp);
                 }
             }
-            return (T)list;
+            return list;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return (T)list;
+            return list;
         }
     }
 
@@ -175,8 +176,15 @@ public class CursorResultReflectUtil {
                             return  true;
                         }
                     }
-                    if(propertyInfo.getType()>=PropertyInfo.PROPERTYTYPE_SHORT&&propertyInfo.getType()<=PropertyInfo.PROPERTYTYPE_LONG){
+                    if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_SHORT||propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_INT){
                         if(((Comparable)o).compareTo(0)==0){
+                            return  true;
+                        }
+                    }
+                    if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_LONG){
+                    	Long S=00l;
+                    	S.compareTo(123L);
+                        if(((Comparable)o).compareTo(0L)==0){
                             return  true;
                         }
                     }
