@@ -1,0 +1,28 @@
+package com.codingdie.rwsdatabase.test.orm;
+
+import com.codingdie.rwsdatabase.connection.WritableConnection;
+
+import java.util.Random;
+
+/**
+ * Created by xupen on 2016/8/26.
+ */
+public class ORMTestVersionManager {
+    public void  createDatabase(WritableConnection db){
+        db.execWriteSQL("DROP TABLE IF EXISTS `Class`");
+        db.execWriteSQL("CREATE TABLE `Class` ( `classId`  INTEGER   ,`className`  TEXT)");
+        db.execWriteSQL("DROP TABLE IF EXISTS `Student`");
+        db.execWriteSQL("CREATE TABLE `Student` (`classId`  INTEGER   , `studentId`  INTEGER  ,`studentName`  TEXT)");
+        for(int i=0;i<20;i++){
+            db.execWriteSQL("insert into   `Class` ( `classId`  ,`className`  ) values(?,?)",new Object[]{i+1,(i+1)+"班"});
+            for(int j=0;j<new Random().nextInt(50)+2;j++){
+                db.execWriteSQL("insert into   `Student` ( `classId`  ,`studentId`,`studentName`  ) values(?,?,?)",new Object[]{i+1,j+1,(i+1)+"班"+(j+1)+"号学生"});
+            }
+        }
+
+    }
+
+
+}
+
+

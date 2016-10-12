@@ -23,7 +23,15 @@ public class ClassInfo {
         }
         return propertyInfos;
     }
-
+    public List<PropertyInfo> getArrayProperties() {
+        List<PropertyInfo> propertyInfos=new ArrayList<PropertyInfo>();
+        for(int i=0;i<properties.size();i++){
+            if(properties.get(i).getType()==PropertyInfo.PROPERTYTYPE_COLLECTION){
+                propertyInfos.add(properties.get(i));
+            }
+        }
+        return propertyInfos;
+    }
     public List<PropertyInfo> getProperties() {
         return properties;
     }

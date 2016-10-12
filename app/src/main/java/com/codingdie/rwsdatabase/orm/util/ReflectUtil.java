@@ -1,12 +1,9 @@
 package com.codingdie.rwsdatabase.orm.util;
 
-import com.codingdie.rwsdatabase.orm.annotation.ColumAnnotation;
+import com.codingdie.rwsdatabase.orm.annotation.Colum;
 import com.codingdie.rwsdatabase.orm.cache.ClassCache;
 import com.codingdie.rwsdatabase.orm.cache.model.ClassInfo;
 import com.codingdie.rwsdatabase.orm.cache.model.PropertyInfo;
-import com.codingdie.rwsdatabase.orm.cache.model.TestClass;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ public class ReflectUtil {
                     propertyInfo.setName(field.getName());
                     propertyInfo.setType(field.getGenericType().toString());
                     propertyInfo.setField(field);
-                    ColumAnnotation annotation=field.getAnnotation(ColumAnnotation.class);
+                    Colum annotation=field.getAnnotation(Colum.class);
                     if(annotation!=null&&!annotation.ignore()){
                         propertyInfo.setAlias(annotation.alias());
                         propertyInfo.setKey(annotation.isKey());
@@ -58,7 +55,7 @@ public class ReflectUtil {
                     propertyInfo.setName(field.getName());
                     propertyInfo.setType(field.getGenericType().toString());
                     propertyInfo.setField(field);
-                    ColumAnnotation annotation=field.getAnnotation(ColumAnnotation.class);
+                    Colum annotation=field.getAnnotation(Colum.class);
                     if(annotation!=null&&!annotation.ignore()){
                         propertyInfo.setAlias(annotation.alias());
                         propertyInfo.setKey(annotation.isKey());
@@ -89,7 +86,7 @@ public class ReflectUtil {
                     propertyInfo.setName(field.getName());
                     propertyInfo.setType(field.getGenericType().toString());
                     propertyInfo.setField(field);
-                    ColumAnnotation annotation=field.getAnnotation(ColumAnnotation.class);
+                    Colum annotation=field.getAnnotation(Colum.class);
                     if(annotation!=null&&!annotation.ignore()){
                         propertyInfo.setAlias(annotation.alias());
                         propertyInfo.setKey(annotation.isKey());
@@ -114,7 +111,7 @@ public class ReflectUtil {
                 return false;
             }
             boolean flag=true;
-            ClassInfo aClassInfo=   ClassCache.getInstance().get(a.getClass());
+            ClassInfo aClassInfo=   ClassCache.getInstance().getClassInfo(a.getClass());
             List<PropertyInfo> propertyInfos=aClassInfo.getNotArrayProperties();
             for(int i=0;i<propertyInfos.size();i++){
                 PropertyInfo propertyInfo=propertyInfos.get(i);
@@ -149,9 +146,17 @@ public class ReflectUtil {
     }
 
     public static   class TestClass{
+        @Colum(isKey = true)
         private String string;
+        @Colum(isKey = true)
         private int intValue;
+        @Colum(isKey = true)
         private Integer integerValue;
+        @Colum(isKey = true)
+        private float floatValue;
+        @Colum(isKey = true)
+        private Float FloatValue;
+        private double doubleValue;
 
         public String getString() {
             return string;
@@ -159,6 +164,18 @@ public class ReflectUtil {
 
         public void setString(String string) {
             this.string = string;
+        }
+
+        public float getFloatValue() {
+            return floatValue;
+        }
+
+        public void setFloatValue(Float floatValue) {
+            FloatValue = floatValue;
+        }
+
+        public void setFloatValue(float floatValue) {
+            this.floatValue = floatValue;
         }
 
         public int getIntValue() {

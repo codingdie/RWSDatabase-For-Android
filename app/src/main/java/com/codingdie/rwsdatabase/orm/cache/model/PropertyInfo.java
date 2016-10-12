@@ -3,6 +3,8 @@ package com.codingdie.rwsdatabase.orm.cache.model;
 import com.codingdie.rwsdatabase.orm.cache.ClassCache;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by xupen on 2016/9/28.
@@ -12,7 +14,7 @@ public class PropertyInfo {
 
     private String name;
     private int type=-1;
-    private String collectionItemClass;
+    private Class collectionItemClass;
     private Field field;
 
     private boolean isKey;
@@ -34,8 +36,23 @@ public class PropertyInfo {
         isKey = key;
     }
 
-    public String[] getAlias() {
-        return alias;
+    public Class getCollectionItemClass() {
+        return collectionItemClass;
+    }
+
+    public void setCollectionItemClass(Class collectionItemClass) {
+        this.collectionItemClass = collectionItemClass;
+    }
+
+    public List<String> getAlias() {
+        List<String> strings=new ArrayList<String>();
+        if(alias!=null){
+            for(String str:alias){
+                strings.add(str);
+            }
+        }
+        strings.add(name);
+        return strings;
     }
 
     public void setAlias(String[] alias) {
@@ -71,7 +88,7 @@ public class PropertyInfo {
             this.type=PROPERTYTYPE_DOUBLE;
         } else if(typeStr.startsWith("java.util.List<")){
             try {
-                collectionItemClass=Class.forName(typeStr.substring(15,typeStr.length()-1)).toString();
+                collectionItemClass=Class.forName(typeStr.substring(15,typeStr.length()-1));
                 this.type= PROPERTYTYPE_COLLECTION;
             }catch (Exception ex){
                 collectionItemClass=null;
@@ -171,7 +188,7 @@ public class PropertyInfo {
 
     public static  final int PROPERTYTYPE_STRING=5;
 
-    public static  final int PROPERTYTYPE_OBJECT=6;
+//    public static  final int PROPERTYTYPE_OBJECT=6;
     public static  final int PROPERTYTYPE_COLLECTION =7;
 
 }

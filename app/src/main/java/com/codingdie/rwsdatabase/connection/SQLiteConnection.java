@@ -2,6 +2,7 @@ package com.codingdie.rwsdatabase.connection;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import com.codingdie.rwsdatabase.orm.CursorResultReflectUtil;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -75,16 +76,14 @@ public class SQLiteConnection   {
         return   this.sqLiteDatabase.query(table ,columns,selection,selectionArgs,groupBy,having,orderBy,limit);
     }
 
-    //TODO
-    @Deprecated
     public <T> T queryObject(String sql , String[] param,Class<T> tClass,List<String>... ignoreProps){
-       return  null;
+        return CursorResultReflectUtil.toObject(this.execReadSQL(sql,param),tClass);
     }
 
     //TODO
     @Deprecated
     public List queryObjectList(String sql , String[] param, Class tClass,List<String>... ignoreProps){
-        return  null;
+        return CursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass);
     }
 
 
