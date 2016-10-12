@@ -6,6 +6,7 @@ import com.codingdie.rwsdatabase.R;
 import com.codingdie.rwsdatabase.orm.cache.ClassCache;
 import com.codingdie.rwsdatabase.orm.cache.model.ClassInfo;
 import com.codingdie.rwsdatabase.orm.cache.model.TestClass;
+import com.google.gson.Gson;
 
 public class TestOrmActivity extends Activity {
 

@@ -114,29 +114,68 @@ public class ReflectUtil {
                 return false;
             }
             boolean flag=true;
-            ClassInfo aClassInfo=  ClassCache.getInstance().get(a.getClass());
+            ClassInfo aClassInfo=   ClassCache.getInstance().get(a.getClass());
             List<PropertyInfo> propertyInfos=aClassInfo.getNotArrayProperties();
             for(int i=0;i<propertyInfos.size();i++){
                 PropertyInfo propertyInfo=propertyInfos.get(i);
                 Field field= propertyInfo.getField();
-                 if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_STRING){
-                    String avalue= (String) field.get(a);
-                    String bvalue= (String) field.get(b);
+                field.setAccessible(true);
+                 if(propertyInfo.getType()>PropertyInfo.PROPERTYTYPE_SHORT&&propertyInfo.getType()<=PropertyInfo.PROPERTYTYPE_STRING){
+                     Object avalue=  field.get(a);
+                     Object bvalue= field.get(b);
                     if((avalue==null&&bvalue!=null)||(avalue!=null&&bvalue==null)||(avalue!=null&&bvalue!=null&&!avalue.equals(bvalue))){
                         flag=false;
                     }
-                }else{
-                     Number avalue= (Number) field.get(a);
-                     Number bvalue= (Number) field.get(b);
-                     if((avalue==null&&bvalue!=null)||(avalue!=null&&bvalue==null)||(avalue!=null&&bvalue!=null&&!avalue.equals(bvalue))){
-                         flag=false;
-                     }
-                 }
+                }
             }
             return  flag;
         }catch (Exception ex){
+            ex.printStackTrace();
             return  false;
         }
 
     }
+
+    public static void main(String[] args) throws  Exception{
+       TestClass testClass2=new  TestClass();
+        testClass2.setString("a");
+        testClass2.setIntValue(1);
+        testClass2.setIntegerValue(1);
+        TestClass testClass1=new  TestClass();
+        testClass1.setString("a");
+        testClass1.setIntValue(1);
+        testClass1.setIntegerValue(1);
+        System.out.println(compareObjectWithoutArrayProp(testClass1,testClass2));
+    }
+
+    public static   class TestClass{
+        private String string;
+        private int intValue;
+        private Integer integerValue;
+
+        public String getString() {
+            return string;
+        }
+
+        public void setString(String string) {
+            this.string = string;
+        }
+
+        public int getIntValue() {
+            return intValue;
+        }
+
+        public void setIntValue(int intValue) {
+            this.intValue = intValue;
+        }
+
+        public Integer getIntegerValue() {
+            return integerValue;
+        }
+
+        public void setIntegerValue(Integer integerValue) {
+            this.integerValue = integerValue;
+        }
+    }
 }
+
