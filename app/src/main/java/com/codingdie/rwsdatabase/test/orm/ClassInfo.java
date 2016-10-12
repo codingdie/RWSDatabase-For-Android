@@ -1,12 +1,14 @@
 package com.codingdie.rwsdatabase.test.orm;
 
+import java.util.List;
+
 /**
  * Created by xupen on 2016/10/12.
  */
 public class ClassInfo {
     private  int classId;
     private  String className;
-
+    private List<Student> students;
     public int getClassId() {
         return classId;
     }
@@ -21,5 +23,13 @@ public class ClassInfo {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 }

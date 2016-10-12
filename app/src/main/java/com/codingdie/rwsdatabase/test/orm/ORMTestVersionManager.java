@@ -15,6 +15,9 @@ public class ORMTestVersionManager {
         db.execWriteSQL("CREATE TABLE `Student` (`classId`  INTEGER   , `studentId`  INTEGER  ,`studentName`  TEXT)");
         for(int i=0;i<20;i++){
             db.execWriteSQL("insert into   `Class` ( `classId`  ,`className`  ) values(?,?)",new Object[]{i+1,(i+1)+"班"});
+            if(i==0){
+               continue;
+            }
             for(int j=0;j<new Random().nextInt(50)+2;j++){
                 db.execWriteSQL("insert into   `Student` ( `classId`  ,`studentId`,`studentName`  ) values(?,?,?)",new Object[]{i+1,j+1,(i+1)+"班"+(j+1)+"号学生"});
             }

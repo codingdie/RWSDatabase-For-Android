@@ -113,8 +113,8 @@ public class ReflectUtil {
             boolean flag=true;
             ClassInfo aClassInfo=   ClassCache.getInstance().getClassInfo(a.getClass());
             List<PropertyInfo> propertyInfos=aClassInfo.getNotArrayProperties();
-            for(int i=0;i<propertyInfos.size();i++){
-                PropertyInfo propertyInfo=propertyInfos.get(i);
+            for(int index=0;index<propertyInfos.size();index++){
+                PropertyInfo propertyInfo=propertyInfos.get(index);
                 Field field= propertyInfo.getField();
                 field.setAccessible(true);
                  if(propertyInfo.getType()>PropertyInfo.PROPERTYTYPE_SHORT&&propertyInfo.getType()<=PropertyInfo.PROPERTYTYPE_STRING){

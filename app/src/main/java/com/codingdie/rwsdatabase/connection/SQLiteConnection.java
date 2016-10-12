@@ -80,8 +80,6 @@ public class SQLiteConnection   {
         return CursorResultReflectUtil.toObject(this.execReadSQL(sql,param),tClass);
     }
 
-    //TODO
-    @Deprecated
     public List queryObjectList(String sql , String[] param, Class tClass,List<String>... ignoreProps){
         return CursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass);
     }

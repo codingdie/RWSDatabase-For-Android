@@ -18,21 +18,21 @@ public class CursorResultReflectUtil {
     public static <T> T toObject(Cursor cursor, Class<T> tClass,List<String>... ignoreProps) {
         try {
             if (cursor.getCount() > 0) {
-                Object obj=null;
+                Object objFinal=null;
                 while(cursor.moveToNext()){
                     Object tmp=fillOneObject(cursor,tClass);
-                    if(obj==null){
-                        obj=tmp;
+                    if(objFinal==null){
+                        objFinal=tmp;
                     }else{
-                        if(!ReflectUtil.compareObjectWithoutArrayProp(tmp,obj)){
+                        if(!ReflectUtil.compareObjectWithoutArrayProp(tmp,objFinal)){
                              break;
                         }
-                        addArrayPropertyFromBToA(obj,tmp);
+                        addArrayPropertyFromBToA(objFinal,tmp);
 
                     }
                 }
                 cursor.close();
-                return  (T)obj;
+                return  (T)objFinal;
             } else {
                 return null;
             }
@@ -44,9 +44,19 @@ public class CursorResultReflectUtil {
     public static <T> T  toList(Cursor cursor, Class tClass){
         List list=new ArrayList();
         try {
+            Object obj=null;
             while(cursor.moveToNext()){
                 Object tmp=fillOneObject(cursor,tClass);
-
+                if(obj==null){
+                    obj=tmp;
+                    list.add(obj);
+                }else{
+                    if(!ReflectUtil.compareObjectWithoutArrayProp(tmp,obj)){
+                        obj=tmp;
+                        list.add(obj);
+                    }
+                    addArrayPropertyFromBToA(obj,tmp);
+                }
             }
             return (T)list;
         } catch (Exception ex) {
@@ -63,7 +73,7 @@ public class CursorResultReflectUtil {
                     Field field= propertyInfo.getField();
                      field.setAccessible(true);
                      List lista=(List) field.get(a);
-                     List listb=(List) field.get(a);
+                     List listb=(List) field.get(b);
                      if(listb!=null&&listb.size()>0){
                          for(Object newItem :listb){
                              boolean flag=false;
@@ -96,10 +106,10 @@ public class CursorResultReflectUtil {
                 for (PropertyInfo propertyInfo : classInfo.getProperties()) {
                     List<String> alias = propertyInfo.getAlias();
                     int index = getIndexFromCousorByAlias(alias, cursor);
-
+                    Field field = propertyInfo.getField();
+                    field.setAccessible(true);
                     if (index != -1) {
-                        Field field = propertyInfo.getField();
-                        field.setAccessible(true);
+
                         if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_SHORT) {
                             field.set(o, cursor.getShort(index));
                         } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_SHORT) {
@@ -114,19 +124,22 @@ public class CursorResultReflectUtil {
                             field.set(o, cursor.getDouble(index));
                         } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_STRING) {
                             field.set(o, cursor.getString(index));
-                        } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_COLLECTION) {
+                        }
+
+                    } else {
+                        if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_COLLECTION) {
                             List list = new ArrayList();
                             Object object = fillOneObject(cursor, propertyInfo.getCollectionItemClass());
                             if (object != null) {
                                 list.add(object);
                             }
                             field.set(o, list);
+                        }else{
+                            if (propertyInfo.isKey()) {
+                                return null;
+                            }
                         }
 
-                    } else {
-                        if (propertyInfo.isKey()) {
-                            return null;
-                        }
                     }
 
                 }
@@ -188,14 +201,29 @@ public class CursorResultReflectUtil {
     }
 
     private static int getIndexFromCousorByAlias(List<String> alias, Cursor cursor) {
+        int index=-1;
         for (String alia : alias) {
-            int index = cursor.getColumnIndex(alia);
+            index = getColumnIndexWhenComlunmMaybeRepeat(cursor, alia);
             if (index != -1) {
-                return index;
-            }
+                 break;
+             }
         }
-        return -1;
+        return index;
     }
 
+
+    private static int getColumnIndexWhenComlunmMaybeRepeat(Cursor cursor, String name) {
+        int index=-1;
+        for(int i=0;i<cursor.getColumnCount();i++){
+            if(cursor.getColumnName(i).equals(name)){
+                index=i;
+                String string = cursor.getString(index);
+                if( string!=null&&string.length()>0){
+                    break;
+                }
+            }
+        }
+        return index;
+    }
 
 }

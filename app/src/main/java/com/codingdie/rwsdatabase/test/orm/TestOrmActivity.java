@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
+import java.util.List;
 
 public class TestOrmActivity extends Activity {
 
@@ -23,7 +24,7 @@ public class TestOrmActivity extends Activity {
                 .databaseName("ormtest").databasePath(getSDPath())                     //dbname
                 .versionManager(ORMTestVersionManager.class)       //versionmanager 版本管理器
                 .version(1).create();
-        testFillOneSimpleObject(rwsDatabaseManager);
+        testFillOneComplexObjectList(rwsDatabaseManager);
     }
 
     private void testFillOneSimpleObject(RWSDatabaseManager rwsDatabaseManager) {
@@ -33,6 +34,24 @@ public class TestOrmActivity extends Activity {
         rwsDatabaseManager.releaseReadableDatabase(readableConnection);
     }
 
+    private void testFillOneComplexObject(RWSDatabaseManager rwsDatabaseManager) {
+        ReadableConnection readableConnection= rwsDatabaseManager.getReadableDatabase();
+        ClassInfo classInfo= readableConnection.queryObject("select * from Class c left join student s on s.classId= c.classId  where c.classId=18",new String[]{}, ClassInfo.class);
+        Log.i("test",new GsonBuilder().setPrettyPrinting().create().toJson(classInfo));
+        rwsDatabaseManager.releaseReadableDatabase(readableConnection);
+    }
+    private void testFillOneComplexObjectList(RWSDatabaseManager rwsDatabaseManager) {
+        ReadableConnection readableConnection= rwsDatabaseManager.getReadableDatabase();
+        List<ClassInfo> classInfos= readableConnection.queryObjectList("select * from Class c left join student s on s.classId= c.classId  ",new String[]{}, ClassInfo.class);
+        Log.i("test",new GsonBuilder().setPrettyPrinting().create().toJson(classInfos));
+        rwsDatabaseManager.releaseReadableDatabase(readableConnection);
+    }
+    private void testFillOneSimpleObjectList(RWSDatabaseManager rwsDatabaseManager) {
+        ReadableConnection readableConnection= rwsDatabaseManager.getReadableDatabase();
+        List<ClassInfo> classInfos= readableConnection.queryObjectList("select * from Class ",new String[]{}, ClassInfo.class);
+        Log.i("test",new GsonBuilder().setPrettyPrinting().create().toJson(classInfos));
+        rwsDatabaseManager.releaseReadableDatabase(readableConnection);
+    }
     public String getSDPath() {
         File sdDir = null;
         boolean sdCardExist = Environment.getExternalStorageState()
