@@ -1,6 +1,7 @@
 package com.codingdie.rwsdatabase.orm;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.codingdie.rwsdatabase.orm.cache.ClassCache;
 import com.codingdie.rwsdatabase.orm.cache.model.ClassInfo;
@@ -48,6 +49,9 @@ public class CursorResultReflectUtil {
             E obj=null;
             while(cursor.moveToNext()){
                 E tmp=fillOneObject(cursor,tClass);
+                if(tmp==null){
+                	break;
+                }
                 if(obj==null){
                     obj=tmp;
                     list.add(obj);
@@ -222,12 +226,13 @@ public class CursorResultReflectUtil {
 
     private static int getColumnIndexWhenComlunmMaybeRepeat(Cursor cursor, String name) {
         int index=-1;
+        
         for(int i=0;i<cursor.getColumnCount();i++){
             if(cursor.getColumnName(i).equals(name)){
-                index=i;
-                String string = cursor.getString(index);
-                if( string!=null&&string.length()>0){
-                    break;
+                String string = cursor.getString(i);
+                if( string!=null&&string.trim().length()>0){
+                    index=i;
+                 break;
                 }
             }
         }
