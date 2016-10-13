@@ -43,6 +43,7 @@ public class CursorResultReflectUtil {
             return null;
         }
     }
+
     public static <E> List<E>  toList(Cursor cursor, Class<E> tClass,String[]... ignoreProps){
         List<E> list=new ArrayList<E>();
         try {
@@ -186,8 +187,6 @@ public class CursorResultReflectUtil {
                         }
                     }
                     if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_LONG){
-                    	Long S=00l;
-                    	S.compareTo(123L);
                         if(((Comparable)o).compareTo(0L)==0){
                             return  true;
                         }
@@ -223,10 +222,8 @@ public class CursorResultReflectUtil {
         return index;
     }
 
-
     private static int getColumnIndexWhenComlunmMaybeRepeat(Cursor cursor, String name) {
         int index=-1;
-        
         for(int i=0;i<cursor.getColumnCount();i++){
             if(cursor.getColumnName(i).equals(name)){
                 String string = cursor.getString(i);
