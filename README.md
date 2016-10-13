@@ -48,16 +48,22 @@ public class VersionManager {
     
     //创建数据库(版本1)
     public void  createDatabase(WritableConnection db){
-        db.execWriteSQL("DROP TABLE IF EXISTS `Class`");
-        db.execWriteSQL("CREATE TABLE `Class` ( `classId`  INTEGER PRIMARY KEY  ,`className`  TEXT)");
+        db.execWriteSQL("DROP TABLE IF EXISTS `Class`");
+        db.execWriteSQL("CREATE TABLE `Class` ( `classId`  INTEGER   ,`className`  TEXT)");
+        db.execWriteSQL("DROP TABLE IF EXISTS `Student`");
+        db.execWriteSQL("CREATE TABLE `Student` (`classId`  INTEGER   , `studentId`  INTEGER  ,`studentName`  TEXT)");
     }
     //从版本1升级到版本2
     public void  version1ToVersion2(WritableConnection db){
-        db.execWriteSQL("DROP TABLE IF EXISTS `Student`");
-        db.execWriteSQL("CREATE TABLE `Student` ( `classId`  INTEGER PRIMARY KEY  ,`studentId`  INTEGER ,`studentName`  TEXT)");
-        db.execWriteSQL("DROP TABLE IF EXISTS `Teacher`");
-        db.execWriteSQL("CREATE TABLE `Teacher` ( `classId`  INTEGER PRIMARY KEY  ,`teacherId`  INTEGER ,`teacherName`  TEXT)");
-
+      for(int i=0;i<20;i++){
+            db.execWriteSQL("insert into   `Class` ( `classId`  ,`className`  ) values(?,?)",new Object[]{i+1,(i+1)+"班"});
+            if(i==0){
+                continue;
+            }
+            for(int j=0;j<new Random().nextInt(50)+2;j++){
+                db.execWriteSQL("insert into   `Student` ( `classId`  ,`studentId`,`studentName`  ) values(?,?,?)",new Object[]{i+1,j+1,(i+1)+"班"+(j+1)+"号学生"});
+            }
+        }
     }
     //从版本n升级到版本n+1的变动
     public void  version(n)ToVersion(n+1)(WritableConnection db){
@@ -66,9 +72,34 @@ public class VersionManager {
 }
 
   
+ ```  
+ 2 simply query and write  with orm
+ sql查询写入(非orm)
+ ``` 
+  //read/query
+  ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
+  Cursor cursor = readableConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
+  cursor.moveToNext();
+  final long sum=cursor.getInt(0);
+  cursor.close();
+  rwsDatabaseManager.releaseReadableDatabase(readableConnection); 
+     
+  //write
+  WritableConnection writableConnection=rwsDatabaseManager.getWritableConnection();
+  writableConnection.beginTransaction();//开始事务
+       
+  writableConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+
+  writableConnection.setTransactionSuccessful();
+  writableConnection.endTransaction();;//结束事务
+  rwsDatabaseManager.releaseWritableConnection();
+ ```
+
  
  ```  
- 2 simply query and write  with sql(no orm)  
+ 
+ 
+ 3 simply query and write  with sql(no orm)  
  sql查询写入(非orm)
  ``` 
   //read/query
