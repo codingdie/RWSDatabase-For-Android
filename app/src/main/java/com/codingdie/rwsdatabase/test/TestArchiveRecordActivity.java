@@ -11,11 +11,8 @@ import android.view.View;
 import com.codingdie.rwsdatabase.R;
 import com.codingdie.rwsdatabase.test.model.ArchiveRecord;
 import com.codingdie.rwsdatabase.test.model.ArchiveRecordItem;
-import com.codingdie.rwsdatabase.version.VersionController;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import javax.xml.transform.Source;
 import java.util.ArrayList;
 import java.util.List;
 

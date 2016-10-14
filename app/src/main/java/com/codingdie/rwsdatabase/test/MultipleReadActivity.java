@@ -13,7 +13,7 @@ import com.codingdie.rwsdatabase.RWSDatabaseCreator;
 import com.codingdie.rwsdatabase.RWSDatabaseManager;
 import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
-import com.codingdie.rwsdatabase.log.LogUtil;
+import com.codingdie.rwsdatabase.log.RWSLogUtil;
 import com.codingdie.rwsdatabase.test.db.SqliteHelper;
 import com.codingdie.rwsdatabase.test.db.VersionManager;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
@@ -83,7 +83,7 @@ public class MultipleReadActivity extends Activity {
 
                                  @Override
                                  public void progress(double progress) {
-                                     LogUtil.log("progress:"+progress);
+                                     RWSLogUtil.log("progress:"+progress);
 
                                      progressEdit.setText(String.valueOf(progress));
                                  }
@@ -164,7 +164,7 @@ public class MultipleReadActivity extends Activity {
                         Cursor cursor = sqLiteDatabase.rawQuery("select sum(studentId)  from Student ", new String[]{});
                         cursor.moveToNext();
                         final long sum=cursor.getInt(0);
-//                        LogUtil.log("2:"+sum);
+//                        RWSLogUtil.log("2:"+sum);
 
                         cursor.close();
                         count2++;
@@ -192,7 +192,7 @@ public class MultipleReadActivity extends Activity {
                         Cursor cursor = writableSQLiteConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
                         cursor.moveToNext();
                         final long sum=cursor.getInt(0);
-//                        LogUtil.log("1:"+sum);
+//                        RWSLogUtil.log("1:"+sum);
                         cursor.close();
                         rwsDatabaseManager.releaseReadableDatabase(writableSQLiteConnection);
                         count1++;

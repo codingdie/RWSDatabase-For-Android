@@ -2,16 +2,14 @@ package com.codingdie.rwsdatabase.test.orm;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import com.codingdie.rwsdatabase.operator.ReadOperator;
+import com.codingdie.rwsdatabase.ReadOperator;
 import com.codingdie.rwsdatabase.R;
 import com.codingdie.rwsdatabase.RWSDatabaseCreator;
 import com.codingdie.rwsdatabase.RWSDatabaseManager;
 import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
 import java.util.List;
 
 public class TestOrmActivity extends Activity {
@@ -25,7 +23,7 @@ public class TestOrmActivity extends Activity {
                 .versionManager(ORMTestVersionManager.class)       //versionmanager 版本管理器
                 .version(2)
                 .create();
-
+        testFillComplexObjectList(rwsDatabaseManager);
     }
 
     private void testFillOneSimpleObject(RWSDatabaseManager rwsDatabaseManager) {
@@ -49,7 +47,7 @@ public class TestOrmActivity extends Activity {
         Log.i("test", new GsonBuilder().setPrettyPrinting().create().toJson(classInfo));
     }
 
-    private void testFillOneComplexObjectList(RWSDatabaseManager rwsDatabaseManager) {
+    private void testFillComplexObjectList(RWSDatabaseManager rwsDatabaseManager) {
         List<ClassInfo>  classInfos = rwsDatabaseManager.execReadOperator(new ReadOperator<List<ClassInfo> >() {
             @Override
             public   List<ClassInfo> exec(ReadableConnection readableConnection) {

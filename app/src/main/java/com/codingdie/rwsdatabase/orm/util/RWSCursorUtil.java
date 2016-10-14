@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by xupen on 2016/9/28.
  */
-public class CursorUtil  {
+public class RWSCursorUtil {
    public   <T> T toObjct(Class<T> aClass, Cursor cursor) throws  Exception {
        if(cursor.getCount()>0){
            T t= aClass.newInstance();

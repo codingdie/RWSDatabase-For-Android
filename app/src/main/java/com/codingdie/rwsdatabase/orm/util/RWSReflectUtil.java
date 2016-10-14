@@ -1,9 +1,9 @@
 package com.codingdie.rwsdatabase.orm.util;
 
-import com.codingdie.rwsdatabase.orm.annotation.Colum;
-import com.codingdie.rwsdatabase.orm.cache.ClassCache;
-import com.codingdie.rwsdatabase.orm.cache.model.ClassInfo;
-import com.codingdie.rwsdatabase.orm.cache.model.PropertyInfo;
+import com.codingdie.rwsdatabase.orm.annotation.RWSColum;
+import com.codingdie.rwsdatabase.orm.cache.RWSClassCache;
+import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
+import com.codingdie.rwsdatabase.orm.cache.model.RWSPropertyInfo;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -12,36 +12,36 @@ import java.util.List;
 /**
  * Created by xupen on 2016/9/28.
  */
-public class ReflectUtil {
-    public static List<PropertyInfo> getAllProperty(Class aClass){
-        List<PropertyInfo> propertyInfos=new ArrayList<PropertyInfo>();
+public class RWSReflectUtil {
+    public static List<RWSPropertyInfo> getAllProperty(Class aClass){
+        List<RWSPropertyInfo> RWSPropertyInfos =new ArrayList<RWSPropertyInfo>();
         Field[] fields= aClass.getDeclaredFields();
         if(fields!=null&&fields.length>0){
             for(int i=0;i<fields.length;i++){
                 Field field=fields[i];
-                if(PropertyInfo.checkFieldCanOrm(field.getGenericType().toString())){
-                    PropertyInfo propertyInfo=new PropertyInfo();
-                    propertyInfo.setName(field.getName());
-                    propertyInfo.setType(field.getGenericType().toString());
-                    propertyInfo.setField(field);
-                    Colum annotation=field.getAnnotation(Colum.class);
+                if(RWSPropertyInfo.checkFieldCanOrm(field.getGenericType().toString())){
+                    RWSPropertyInfo RWSPropertyInfo =new RWSPropertyInfo();
+                    RWSPropertyInfo.setName(field.getName());
+                    RWSPropertyInfo.setType(field.getGenericType().toString());
+                    RWSPropertyInfo.setField(field);
+                    RWSColum annotation=field.getAnnotation(RWSColum.class);
                     if(annotation!=null&&!annotation.ignore()){
-                        propertyInfo.setAlias(annotation.alias());
-                        propertyInfo.setKey(annotation.isKey());
+                        RWSPropertyInfo.setAlias(annotation.alias());
+                        RWSPropertyInfo.setKey(annotation.isKey());
                     }
                     if(annotation==null||annotation!=null&&annotation.ignore()==false){
-                        propertyInfos.add(propertyInfo);
+                        RWSPropertyInfos.add(RWSPropertyInfo);
                     }
                 }
 
 
             }
         }
-        return  propertyInfos;
+        return RWSPropertyInfos;
     }
 
-    public static List<PropertyInfo> getNotArrayProperty(Class aClass){
-        List<PropertyInfo> propertyInfos=new ArrayList<PropertyInfo>();
+    public static List<RWSPropertyInfo> getNotArrayProperty(Class aClass){
+        List<RWSPropertyInfo> RWSPropertyInfos =new ArrayList<RWSPropertyInfo>();
         Field[] fields= aClass.getDeclaredFields();
         if(fields!=null&&fields.length>0){
             for(int i=0;i<fields.length;i++){
@@ -50,29 +50,29 @@ public class ReflectUtil {
                   continue;
                 }
 
-                if(PropertyInfo.checkFieldCanOrm(field.getGenericType().toString())){
-                    PropertyInfo propertyInfo=new PropertyInfo();
-                    propertyInfo.setName(field.getName());
-                    propertyInfo.setType(field.getGenericType().toString());
-                    propertyInfo.setField(field);
-                    Colum annotation=field.getAnnotation(Colum.class);
+                if(RWSPropertyInfo.checkFieldCanOrm(field.getGenericType().toString())){
+                    RWSPropertyInfo RWSPropertyInfo =new RWSPropertyInfo();
+                    RWSPropertyInfo.setName(field.getName());
+                    RWSPropertyInfo.setType(field.getGenericType().toString());
+                    RWSPropertyInfo.setField(field);
+                    RWSColum annotation=field.getAnnotation(RWSColum.class);
                     if(annotation!=null&&!annotation.ignore()){
-                        propertyInfo.setAlias(annotation.alias());
-                        propertyInfo.setKey(annotation.isKey());
+                        RWSPropertyInfo.setAlias(annotation.alias());
+                        RWSPropertyInfo.setKey(annotation.isKey());
                     }
                     if(annotation==null||annotation!=null&&annotation.ignore()==false){
-                        propertyInfos.add(propertyInfo);
+                        RWSPropertyInfos.add(RWSPropertyInfo);
                     }
                 }
 
 
             }
         }
-        return  propertyInfos;
+        return RWSPropertyInfos;
     }
 
-    public static List<PropertyInfo> getArrayProperty(Class aClass){
-        List<PropertyInfo> propertyInfos=new ArrayList<PropertyInfo>();
+    public static List<RWSPropertyInfo> getArrayProperty(Class aClass){
+        List<RWSPropertyInfo> RWSPropertyInfos =new ArrayList<RWSPropertyInfo>();
         Field[] fields= aClass.getDeclaredFields();
         if(fields!=null&&fields.length>0){
             for(int i=0;i<fields.length;i++){
@@ -81,25 +81,25 @@ public class ReflectUtil {
                     continue;
                 }
 
-                if(PropertyInfo.checkFieldCanOrm(field.getGenericType().toString())){
-                    PropertyInfo propertyInfo=new PropertyInfo();
-                    propertyInfo.setName(field.getName());
-                    propertyInfo.setType(field.getGenericType().toString());
-                    propertyInfo.setField(field);
-                    Colum annotation=field.getAnnotation(Colum.class);
+                if(RWSPropertyInfo.checkFieldCanOrm(field.getGenericType().toString())){
+                    RWSPropertyInfo RWSPropertyInfo =new RWSPropertyInfo();
+                    RWSPropertyInfo.setName(field.getName());
+                    RWSPropertyInfo.setType(field.getGenericType().toString());
+                    RWSPropertyInfo.setField(field);
+                    RWSColum annotation=field.getAnnotation(RWSColum.class);
                     if(annotation!=null&&!annotation.ignore()){
-                        propertyInfo.setAlias(annotation.alias());
-                        propertyInfo.setKey(annotation.isKey());
+                        RWSPropertyInfo.setAlias(annotation.alias());
+                        RWSPropertyInfo.setKey(annotation.isKey());
                     }
                     if(annotation==null||annotation!=null&&annotation.ignore()==false){
-                        propertyInfos.add(propertyInfo);
+                        RWSPropertyInfos.add(RWSPropertyInfo);
                     }
                 }
 
 
             }
         }
-        return  propertyInfos;
+        return RWSPropertyInfos;
     }
 
     public static  boolean   compareObjectWithoutArrayProp(Object a,Object b) {
@@ -111,13 +111,13 @@ public class ReflectUtil {
                 return false;
             }
             boolean flag=true;
-            ClassInfo aClassInfo=   ClassCache.getInstance().getClassInfo(a.getClass());
-            List<PropertyInfo> propertyInfos=aClassInfo.getNotArrayProperties();
-            for(int index=0;index<propertyInfos.size();index++){
-                PropertyInfo propertyInfo=propertyInfos.get(index);
-                Field field= propertyInfo.getField();
+            RWSClassInfo aRWSClassInfo =   RWSClassCache.getInstance().getClassInfo(a.getClass());
+            List<RWSPropertyInfo> RWSPropertyInfos = aRWSClassInfo.getNotArrayProperties();
+            for(int index = 0; index< RWSPropertyInfos.size(); index++){
+                RWSPropertyInfo RWSPropertyInfo = RWSPropertyInfos.get(index);
+                Field field= RWSPropertyInfo.getField();
                 field.setAccessible(true);
-                 if(propertyInfo.getType()>PropertyInfo.PROPERTYTYPE_SHORT&&propertyInfo.getType()<=PropertyInfo.PROPERTYTYPE_STRING){
+                 if(RWSPropertyInfo.getType()> RWSPropertyInfo.PROPERTYTYPE_SHORT&& RWSPropertyInfo.getType()<= RWSPropertyInfo.PROPERTYTYPE_STRING){
                      Object avalue=  field.get(a);
                      Object bvalue= field.get(b);
                     if((avalue==null&&bvalue!=null)||(avalue!=null&&bvalue==null)||(avalue!=null&&bvalue!=null&&!avalue.equals(bvalue))){
@@ -146,15 +146,15 @@ public class ReflectUtil {
     }
 
     public static   class TestClass{
-        @Colum(isKey = true)
+        @RWSColum(isKey = true)
         private String string;
-        @Colum(isKey = true)
+        @RWSColum(isKey = true)
         private int intValue;
-        @Colum(isKey = true)
+        @RWSColum(isKey = true)
         private Integer integerValue;
-        @Colum(isKey = true)
+        @RWSColum(isKey = true)
         private float floatValue;
-        @Colum(isKey = true)
+        @RWSColum(isKey = true)
         private Float FloatValue;
         private double doubleValue;
 

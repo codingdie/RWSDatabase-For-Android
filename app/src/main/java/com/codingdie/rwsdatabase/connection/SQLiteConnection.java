@@ -1,16 +1,11 @@
 package com.codingdie.rwsdatabase.connection;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.codingdie.rwsdatabase.orm.CursorResultReflectUtil;
-import com.google.gson.Gson;
-
-import java.util.List;
 
 /**
  * Created by xupen on 2016/8/22.
  */
-public class SQLiteConnection   {
+class SQLiteConnection   {
     protected boolean inUsing = false;
     protected boolean isWritable = false;
     protected int index;

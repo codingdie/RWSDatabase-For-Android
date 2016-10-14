@@ -2,7 +2,7 @@ package com.codingdie.rwsdatabase.connection;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.codingdie.rwsdatabase.orm.CursorResultReflectUtil;
+import com.codingdie.rwsdatabase.orm.RWSCursorResultReflectUtil;
 
 import java.util.List;
 
@@ -33,11 +33,11 @@ public class ReadableConnection extends  SQLiteConnection {
     }
 
     public <T> T queryObject(String sql , String[] param,Class<T> tClass,String[]... ignoreProps){
-        return CursorResultReflectUtil.toObject(this.execReadSQL(sql,param),tClass,ignoreProps);
+        return RWSCursorResultReflectUtil.toObject(this.execReadSQL(sql,param),tClass,ignoreProps);
     }
 
     public <E> List<E> queryObjectList(String sql , String[] param, Class<E> tClass, String[]... ignoreProps){
-        return CursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass,ignoreProps);
+        return RWSCursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass,ignoreProps);
     }
 
 

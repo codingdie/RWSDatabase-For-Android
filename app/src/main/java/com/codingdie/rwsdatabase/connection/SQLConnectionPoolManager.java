@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase.connection;
 import com.codingdie.rwsdatabase.connection.Imp.SQLConnectionPoolManagerImp;
 import com.codingdie.rwsdatabase.connection.Imp.InitSQLiteDatabaseImp;
 import com.codingdie.rwsdatabase.connection.model.InitSQLiteConnectionPoolConfig;
-import com.codingdie.rwsdatabase.log.LogUtil;
+import com.codingdie.rwsdatabase.log.RWSLogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,7 +245,7 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
 
     private void log(String log) {
         if (openLog) {
-            LogUtil.log(log);
+            RWSLogUtil.log(log);
         }
     }
 

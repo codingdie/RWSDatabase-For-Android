@@ -1,14 +1,14 @@
 package com.codingdie.rwsdatabase.test.orm;
 
-import com.codingdie.rwsdatabase.orm.annotation.Colum;
+import com.codingdie.rwsdatabase.orm.annotation.RWSColum;
 
 /**
  * Created by xupen on 2016/10/12.
  */
 public class Student {
-    @Colum(isKey = true)
+    @RWSColum(isKey = true)
     private  int classId;
-    @Colum(isKey = true)
+    @RWSColum(isKey = true)
     private  int studentId;
     private  String studentName;
 

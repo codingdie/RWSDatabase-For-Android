@@ -2,10 +2,10 @@ package com.codingdie.rwsdatabase.version;
 
 import android.os.Handler;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
-import com.codingdie.rwsdatabase.log.LogUtil;
-import com.codingdie.rwsdatabase.version.exception.VersionException;
+import com.codingdie.rwsdatabase.log.RWSLogUtil;
+import com.codingdie.rwsdatabase.version.exception.RWSVersionException;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
-import com.codingdie.rwsdatabase.version.imp.VersionControllerImp;
+import com.codingdie.rwsdatabase.version.imp.RWSVersionControllerInterface;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,19 +13,19 @@ import java.lang.reflect.Method;
 /**
  * Created by xupen on 2016/8/25.
  */
-public class VersionController implements VersionControllerImp {
+public class RWSVersionController implements RWSVersionControllerInterface {
     @Override
     public void createOrUpgradeDatabase(int versionFinal, Class versionManagerClass, WritableConnection db,final UpgradeDatabaseListener upgradeDatabaseListener,Handler mainHandler) {
         try {
             db.beginTransaction();
             Object versionManager=versionManagerClass.newInstance();
             int versionBegin=db.getVersion();
-            LogUtil.log("versionBegin:"+versionBegin);
+            RWSLogUtil.log("versionBegin:"+versionBegin);
 
             if(versionBegin==0){
                 versionBegin = getMaxVersionForMethodToCreateDatabase(versionManagerClass);
 
-                LogUtil.log("maxVersionForMethod:"+versionBegin);
+                RWSLogUtil.log("maxVersionForMethod:"+versionBegin);
                 createDatabase(db,versionManager, versionBegin);
             }
             if(versionFinal>versionBegin){
@@ -40,7 +40,7 @@ public class VersionController implements VersionControllerImp {
                 }
             }
             for (int i=versionBegin;i<versionFinal;i++){
-                LogUtil.log("versionNow:"+i+"  versionFinal:"+versionFinal);
+                RWSLogUtil.log("versionNow:"+i+"  versionFinal:"+versionFinal);
 
                 upgradeDatabase(db,versionManager,i,i+1);
                 final   double progress = ((i + 1 - versionBegin) * 1.0) / (versionFinal - versionBegin);
@@ -68,11 +68,11 @@ public class VersionController implements VersionControllerImp {
                     });
                 }
             }
-        } catch (VersionException e){
+        } catch (RWSVersionException e){
              throw e;
         }catch (Exception e){
             e.printStackTrace();
-            throw new VersionException(VersionException.FAILED_CREATE_OR_UPGRADE_DATABASE);
+            throw new RWSVersionException(RWSVersionException.FAILED_CREATE_OR_UPGRADE_DATABASE);
         }finally {
             db.endTransaction();
         }
@@ -84,7 +84,7 @@ public class VersionController implements VersionControllerImp {
             Method method= versionManager.getClass().getMethod(methodName,WritableConnection.class);
             method.invoke(versionManager,db);
         } catch (NoSuchMethodException e) {
-            throw  new VersionException(String.format(VersionException.NO_UPGRADE_METHOD,versionBegin,versionEnd));
+            throw  new RWSVersionException(String.format(RWSVersionException.NO_UPGRADE_METHOD,versionBegin,versionEnd));
         }
     }
 
@@ -100,7 +100,7 @@ public class VersionController implements VersionControllerImp {
                 method.invoke(versionManager,db);
             }
         } catch (NoSuchMethodException e) {
-            throw  new VersionException(String.format(VersionException.NO_CREATE_METHOD,version));
+            throw  new RWSVersionException(String.format(RWSVersionException.NO_CREATE_METHOD,version));
         }
     }
 

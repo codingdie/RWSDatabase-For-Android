@@ -14,7 +14,7 @@ Why use this database framework?
 3,Clear traceability version management module  
 清晰的可追踪的版本管理
 
-4,The only database framework to support the function of table division,  
+4,The only database framework to support the function of RWSTable division,
 唯一一个支持分表功能的数据库框架,分表在手机端几乎是最终的数据库查询优化方案(微信qq均已实践,一般应用不会用上)
 
 Generally speaking, this framework is to solve the problem of building large-scale application database level, is the first choice of large scale application data framework, but may not be too suitable for small applications  

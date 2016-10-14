@@ -5,7 +5,7 @@ import android.util.Log;
 /**
  * Created by xupen on 2016/8/26.
  */
-public class LogUtil {
+public class RWSLogUtil {
     public  static void log(String s){
         Log.i("RWSDatabase",s);
     }

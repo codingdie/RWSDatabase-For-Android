@@ -1,4 +1,4 @@
-package com.codingdie.rwsdatabase.operator;
+package com.codingdie.rwsdatabase;
 
 import com.codingdie.rwsdatabase.connection.ReadableConnection;
 

@@ -1,7 +1,5 @@
 package com.codingdie.rwsdatabase.orm.cache.model;
 
-import com.codingdie.rwsdatabase.orm.cache.ClassCache;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +7,7 @@ import java.util.List;
 /**
  * Created by xupen on 2016/9/28.
  */
-public class PropertyInfo {
+public class RWSPropertyInfo {
 
 
     private String name;

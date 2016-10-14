@@ -1,12 +1,11 @@
 package com.codingdie.rwsdatabase.orm;
 
 import android.database.Cursor;
-import android.util.Log;
 
-import com.codingdie.rwsdatabase.orm.cache.ClassCache;
-import com.codingdie.rwsdatabase.orm.cache.model.ClassInfo;
-import com.codingdie.rwsdatabase.orm.cache.model.PropertyInfo;
-import com.codingdie.rwsdatabase.orm.util.ReflectUtil;
+import com.codingdie.rwsdatabase.orm.cache.RWSClassCache;
+import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
+import com.codingdie.rwsdatabase.orm.cache.model.RWSPropertyInfo;
+import com.codingdie.rwsdatabase.orm.util.RWSReflectUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.List;
 /**
  * Created by xupen on 2016/10/12.
  */
-public class CursorResultReflectUtil {
+public class RWSCursorResultReflectUtil {
 
     public static <T> T toObject(Cursor cursor, Class<T> tClass,String[]... ignoreProps) {
         try {
@@ -26,7 +25,7 @@ public class CursorResultReflectUtil {
                     if(objFinal==null){
                         objFinal=tmp;
                     }else{
-                        if(!ReflectUtil.compareObjectWithoutArrayProp(tmp,objFinal)){
+                        if(!RWSReflectUtil.compareObjectWithoutArrayProp(tmp,objFinal)){
                              break;
                         }
                         addArrayPropertyFromBToA(objFinal,tmp);
@@ -57,7 +56,7 @@ public class CursorResultReflectUtil {
                     obj=tmp;
                     list.add(obj);
                 }else{
-                    if(!ReflectUtil.compareObjectWithoutArrayProp(tmp,obj)){
+                    if(!RWSReflectUtil.compareObjectWithoutArrayProp(tmp,obj)){
                         obj=tmp;
                         list.add(obj);
                     }
@@ -73,10 +72,10 @@ public class CursorResultReflectUtil {
 
     private static void addArrayPropertyFromBToA(Object a, Object b) {
         try {
-             List<PropertyInfo> propertyInfos=ClassCache.getInstance().getClassInfo(a.getClass()).getArrayProperties();
-             if(propertyInfos!=null&&propertyInfos.size()>0){
-                 for(PropertyInfo propertyInfo :propertyInfos){
-                    Field field= propertyInfo.getField();
+             List<RWSPropertyInfo> RWSPropertyInfos = RWSClassCache.getInstance().getClassInfo(a.getClass()).getArrayProperties();
+             if(RWSPropertyInfos !=null&& RWSPropertyInfos.size()>0){
+                 for(RWSPropertyInfo RWSPropertyInfo : RWSPropertyInfos){
+                    Field field= RWSPropertyInfo.getField();
                      field.setAccessible(true);
                      List lista=(List) field.get(a);
                      List listb=(List) field.get(b);
@@ -84,7 +83,7 @@ public class CursorResultReflectUtil {
                          for(Object newItem :listb){
                              boolean flag=false;
                              for(Object item :lista){
-                                 if(ReflectUtil.compareObjectWithoutArrayProp(item,newItem)){
+                                 if(RWSReflectUtil.compareObjectWithoutArrayProp(item,newItem)){
                                      flag=true;
                                      break;
                                  }
@@ -107,41 +106,41 @@ public class CursorResultReflectUtil {
     private static <T> T fillOneObject(Cursor cursor, Class<T> tClass) {
         try {
             Object o = tClass.newInstance();
-            ClassInfo classInfo = ClassCache.getInstance().getClassInfo(tClass);
-            if (classInfo.getProperties() != null && classInfo.getProperties().size() > 0) {
-                for (PropertyInfo propertyInfo : classInfo.getProperties()) {
-                    List<String> alias = propertyInfo.getAlias();
+            RWSClassInfo RWSClassInfo = RWSClassCache.getInstance().getClassInfo(tClass);
+            if (RWSClassInfo.getProperties() != null && RWSClassInfo.getProperties().size() > 0) {
+                for (RWSPropertyInfo RWSPropertyInfo : RWSClassInfo.getProperties()) {
+                    List<String> alias = RWSPropertyInfo.getAlias();
                     int index = getIndexFromCousorByAlias(alias, cursor);
-                    Field field = propertyInfo.getField();
+                    Field field = RWSPropertyInfo.getField();
                     field.setAccessible(true);
                     if (index != -1) {
 
-                        if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_SHORT) {
+                        if (RWSPropertyInfo.getType() == RWSPropertyInfo.PROPERTYTYPE_SHORT) {
                             field.set(o, cursor.getShort(index));
-                        } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_SHORT) {
+                        } else if (RWSPropertyInfo.getType() == RWSPropertyInfo.PROPERTYTYPE_SHORT) {
                             field.set(o, cursor.getShort(index));
-                        } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_INT) {
+                        } else if (RWSPropertyInfo.getType() == RWSPropertyInfo.PROPERTYTYPE_INT) {
                             field.set(o, cursor.getInt(index));
-                        } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_LONG) {
+                        } else if (RWSPropertyInfo.getType() == RWSPropertyInfo.PROPERTYTYPE_LONG) {
                             field.set(o, cursor.getLong(index));
-                        } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_FLOAT) {
+                        } else if (RWSPropertyInfo.getType() == RWSPropertyInfo.PROPERTYTYPE_FLOAT) {
                             field.set(o, cursor.getFloat(index));
-                        } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_DOUBLE) {
+                        } else if (RWSPropertyInfo.getType() == RWSPropertyInfo.PROPERTYTYPE_DOUBLE) {
                             field.set(o, cursor.getDouble(index));
-                        } else if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_STRING) {
+                        } else if (RWSPropertyInfo.getType() == RWSPropertyInfo.PROPERTYTYPE_STRING) {
                             field.set(o, cursor.getString(index));
                         }
 
                     } else {
-                        if (propertyInfo.getType() == PropertyInfo.PROPERTYTYPE_COLLECTION) {
+                        if (RWSPropertyInfo.getType() == RWSPropertyInfo.PROPERTYTYPE_COLLECTION) {
                             List list = new ArrayList();
-                            Object object = fillOneObject(cursor, propertyInfo.getCollectionItemClass());
+                            Object object = fillOneObject(cursor, RWSPropertyInfo.getCollectionItemClass());
                             if (object != null) {
                                 list.add(object);
                             }
                             field.set(o, list);
                         }else{
-                            if (propertyInfo.isKey()) {
+                            if (RWSPropertyInfo.isKey()) {
                                 return null;
                             }
                         }
@@ -163,40 +162,40 @@ public class CursorResultReflectUtil {
 
     private static boolean checkKeyPropertyIsNull(Object obj) {
         try {
-            ClassInfo classInfo =ClassCache.getInstance().getClassInfo(obj.getClass());
-            List<Integer> integers = classInfo.getKeyPropertyIndexes();
-            List<PropertyInfo> propertyInfoList = classInfo.getProperties();
+            RWSClassInfo RWSClassInfo = RWSClassCache.getInstance().getClassInfo(obj.getClass());
+            List<Integer> integers = RWSClassInfo.getKeyPropertyIndexes();
+            List<RWSPropertyInfo> RWSPropertyInfoList = RWSClassInfo.getProperties();
 
             if (integers != null && integers.size() != 0) {
                 for (int i : integers) {
-                    PropertyInfo propertyInfo = propertyInfoList.get(i);
-                    Field field = propertyInfo.getField();
+                    RWSPropertyInfo RWSPropertyInfo = RWSPropertyInfoList.get(i);
+                    Field field = RWSPropertyInfo.getField();
                     field.setAccessible(true);
                     Object o = field.get(obj);
                     if(o==null){
                         return  true;
                     }
-                    if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_STRING){
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_STRING){
                         if(((String) o).length()==0){
                             return  true;
                         }
                     }
-                    if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_SHORT||propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_INT){
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_SHORT|| RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_INT){
                         if(((Comparable)o).compareTo(0)==0){
                             return  true;
                         }
                     }
-                    if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_LONG){
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_LONG){
                         if(((Comparable)o).compareTo(0L)==0){
                             return  true;
                         }
                     }
-                    if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_FLOAT){
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_FLOAT){
                         if(((Comparable)o).compareTo(0.00f)==0){
                             return  true;
                         }
                     }
-                    if(propertyInfo.getType()==PropertyInfo.PROPERTYTYPE_DOUBLE){
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_DOUBLE){
                         if(((Comparable)o).compareTo(0.00d)==0){
                             return  true;
                         }

@@ -7,9 +7,7 @@ import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.codingdie.rwsdatabase.connection.SQLConnectionPoolManager;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.connection.model.InitSQLiteConnectionPoolConfig;
-import com.codingdie.rwsdatabase.operator.ReadOperator;
-import com.codingdie.rwsdatabase.operator.WriteOperator;
-import com.codingdie.rwsdatabase.version.VersionController;
+import com.codingdie.rwsdatabase.version.RWSVersionController;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
 import java.util.concurrent.locks.Condition;
@@ -40,8 +38,8 @@ public class RWSDatabaseManager {
                 connectionPoolManager.initConnnectionPool(initSQLiteConnectionPoolConfig, new InitSQLiteDatabaseImp() {
                     @Override
                     public void initDatabase(WritableConnection sqLiteConnection) {
-                        VersionController versionController=new VersionController();
-                        versionController.createOrUpgradeDatabase(version, versionManager,sqLiteConnection,upgradeDatabaseListener, mainHandler);
+                        RWSVersionController RWSVersionController =new RWSVersionController();
+                        RWSVersionController.createOrUpgradeDatabase(version, versionManager,sqLiteConnection,upgradeDatabaseListener, mainHandler);
                         initFlag=true;
                         initLockCondition.signalAll();
                         initLock.unlock();
