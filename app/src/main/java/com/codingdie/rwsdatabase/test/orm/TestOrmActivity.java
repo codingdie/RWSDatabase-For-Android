@@ -21,9 +21,11 @@ public class TestOrmActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_orm);
         RWSDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( TestOrmActivity.this) //context
-                .databaseName("ormtest").databasePath(getSDPath())                     //dbname
+                .databaseName("ormtest")   //dbname
+                .databasePath(getSDPath())   //dbpath optional default in the packet path
                 .versionManager(ORMTestVersionManager.class)       //versionmanager 版本管理器
-                .version(1).create();
+                .version(1)
+                .create();
         testFillOneComplexObjectList(rwsDatabaseManager);
     }
 

@@ -17,23 +17,25 @@ public class WritableConnection extends SQLiteConnection {
         this.sqLiteDatabase.execSQL(sql);
     }
 
-    public  int update(String table, ContentValues values, String whereClause, String[] whereArgs) {
-        return  this.sqLiteDatabase.update(table,values,whereClause,whereArgs);
+    @Deprecated
+    public int update(String table, ContentValues values, String whereClause, String[] whereArgs) {
+        return this.sqLiteDatabase.update(table, values, whereClause, whereArgs);
     }
-
+    @Deprecated
     public long insert(String table, String nullColumnHack, ContentValues values)
             throws SQLException {
-        return  this.sqLiteDatabase.insertOrThrow(table,nullColumnHack,values);
+        return this.sqLiteDatabase.insertOrThrow(table, nullColumnHack, values);
+    }
+    @Deprecated
+    public int delete(String table, String whereClause, String[] whereArgs) {
+        return this.sqLiteDatabase.delete(table, whereClause, whereArgs);
     }
 
-    public int  delete(String table, String whereClause, String[] whereArgs) {
-        return  this.sqLiteDatabase.delete(table,whereClause,whereArgs);
-    }
 
     //TODO
     @Deprecated
-    public void insertObjectIntoTable(Object object,String tableName) {
-
+    public <T> void insertObjectIntoTable(T object ,String tableName) {
+        object.getClass();
     }
 
     public void beginTransaction() {
@@ -47,7 +49,6 @@ public class WritableConnection extends SQLiteConnection {
     public void setTransactionSuccessful() {
         this.sqLiteDatabase.setTransactionSuccessful();
     }
-
 
     public void setVersion(int version) {
         this.sqLiteDatabase.setVersion(version);

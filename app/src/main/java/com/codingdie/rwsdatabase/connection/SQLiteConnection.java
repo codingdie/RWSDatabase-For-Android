@@ -69,6 +69,7 @@ public class SQLiteConnection   {
     public Cursor execReadSQL(String sql , String[] param){
         return   this.sqLiteDatabase.rawQuery(sql ,param);
     }
+
     @Deprecated
     public Cursor query(String table, String[] columns, String selection,
                         String[] selectionArgs, String groupBy, String having,
