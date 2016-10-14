@@ -40,7 +40,7 @@ public class VersionController implements VersionControllerImp {
                 }
             }
             for (int i=versionBegin;i<versionFinal;i++){
-                LogUtil.log("versionNow:"+i);
+                LogUtil.log("versionNow:"+i+"  versionFinal:"+versionFinal);
 
                 upgradeDatabase(db,versionManager,i,i+1);
                 final   double progress = ((i + 1 - versionBegin) * 1.0) / (versionFinal - versionBegin);

@@ -56,14 +56,19 @@ public class RWSDatabaseManager {
       return  execAfterInit(new AfterInitOperator<T>() {
             @Override
             public T exec() {
+                T t=null;
+                ReadableConnection readableConnection=null;
                  try {
-                     ReadableConnection readableConnection=  connectionPoolManager.getReadableConnection();
-                     T t=  readOperator.exec(readableConnection);
-                     connectionPoolManager.releaseReadConnection(readableConnection);
+                     readableConnection=  connectionPoolManager.getReadableConnection();
+                     t=  readOperator.exec(readableConnection);
+
                  }catch (Exception ex){
                      ex.printStackTrace();
                  }finally {
-                     return null;
+                     if(readableConnection!=null){
+                         connectionPoolManager.releaseReadConnection(readableConnection);
+                     }
+                     return  t;
                  }
             }
         });
@@ -73,13 +78,16 @@ public class RWSDatabaseManager {
           execAfterInit(new AfterInitOperator<Void>() {
             @Override
             public Void exec() {
+                WritableConnection writableConnection=null;
                 try {
-                    WritableConnection writableConnection=  connectionPoolManager.getWritableConnection();
+                    writableConnection =  connectionPoolManager.getWritableConnection();
                     writeOperator.exec(writableConnection);
-                    connectionPoolManager.releaseWritableConnection();
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }finally {
+                    if(writableConnection!=null){
+                        connectionPoolManager.releaseWritableConnection();
+                    }
                     return null;
                 }
             }
