@@ -66,25 +66,6 @@ public class SQLiteConnection   {
         return this.sqLiteDatabase.getVersion();
     }
 
-    public Cursor execReadSQL(String sql , String[] param){
-        return   this.sqLiteDatabase.rawQuery(sql ,param);
-    }
-
-    @Deprecated
-    public Cursor query(String table, String[] columns, String selection,
-                        String[] selectionArgs, String groupBy, String having,
-                        String orderBy, String limit) {
-        return   this.sqLiteDatabase.query(table ,columns,selection,selectionArgs,groupBy,having,orderBy,limit);
-    }
-
-    public <T> T queryObject(String sql , String[] param,Class<T> tClass,String[]... ignoreProps){
-        return CursorResultReflectUtil.toObject(this.execReadSQL(sql,param),tClass,ignoreProps);
-    }
-
-    public <E> List<E> queryObjectList(String sql , String[] param, Class<E> tClass,String[]... ignoreProps){
-        return CursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass,ignoreProps);
-    }
-
 
 
 }

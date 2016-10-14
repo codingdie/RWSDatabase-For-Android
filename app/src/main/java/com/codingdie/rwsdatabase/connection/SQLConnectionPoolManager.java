@@ -131,7 +131,7 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
         return (Integer) execAfterInit(new AfterInitOperator() {
             @Override
             public Object exec() {
-                Integer count=0;
+                Integer count = 0;
                 for (int i = 0; i < readConnectionsPool.size(); i++) {
                     if (readConnectionsPool.get(i).isInUsing() == false) {
                         count++;
@@ -147,9 +147,9 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
         return (Integer) execAfterInit(new AfterInitOperator() {
             @Override
             public Object exec() {
-                if(writeConnection.isInUsing()==false){
-                    return  1;
-                }else{
+                if (writeConnection.isInUsing() == false) {
+                    return 1;
+                } else {
                     return 0;
                 }
             }
@@ -157,12 +157,12 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
     }
 
     private Object execAfterInit(AfterInitOperator afterInitOperator) {
-        Object object=null;
+        Object object = null;
         try {
             versionControlLock.lock();
             if (initEndFlag) {
                 versionControlLock.unlock();
-                object= afterInitOperator.exec();
+                object = afterInitOperator.exec();
             }
             while (!initEndFlag) {
                 log("wait for initlock");
@@ -170,7 +170,7 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
                 log("end for initlock");
                 if (initEndFlag) {
                     versionControlLock.unlock();
-                    object= afterInitOperator.exec();
+                    object = afterInitOperator.exec();
                 }
             }
         } catch (Exception e) {
@@ -233,12 +233,12 @@ public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
             log("销毁链接" + readConnectionsPool.get(i).getIndex());
             readConnectionsPool.get(i).destroy();
         }
-        readConnectionsPool=new ArrayList<ReadableConnection>();
+        readConnectionsPool = new ArrayList<ReadableConnection>();
         readConnectionLock.unlock();
         writeConnectionLock.lock();
 
         writeConnection.destroy();
-        writeConnection=null;
+        writeConnection = null;
         writeConnectionLock.unlock();
 
     }
