@@ -18,7 +18,7 @@ public class RWSDatabaseCreator {
     private  Class versionManager;
     private  int connectionPoolSize =5;
     private  Context context;
-    private UpgradeDatabaseListener upgradeDatabaseListener;
+    private  UpgradeDatabaseListener upgradeDatabaseListener;
 
     public RWSDatabaseCreator(Context context) {
         this.context = context;

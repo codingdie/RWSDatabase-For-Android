@@ -7,6 +7,8 @@ import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.codingdie.rwsdatabase.connection.SQLConnectionPoolManager;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.connection.model.InitSQLiteConnectionPoolConfig;
+import com.codingdie.rwsdatabase.operator.ReadOperator;
+import com.codingdie.rwsdatabase.operator.WriteOperator;
 import com.codingdie.rwsdatabase.version.VersionController;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
@@ -50,73 +52,112 @@ public class RWSDatabaseManager {
 
     }
 
-    public ReadableConnection getReadableDatabase(){
-     return  (ReadableConnection)execAfterInit(new AfterInitOperator() {
+    public <T> T  execReadOperator(final ReadOperator<T> readOperator){
+      return  execAfterInit(new AfterInitOperator<T>() {
             @Override
-            public Object exec() {
+            public T exec() {
+                 try {
+                     ReadableConnection readableConnection=  connectionPoolManager.getReadableConnection();
+                     T t=  readOperator.exec(readableConnection);
+                     connectionPoolManager.releaseReadConnection(readableConnection);
+                 }catch (Exception ex){
+                     ex.printStackTrace();
+                 }finally {
+                     return null;
+                 }
+            }
+        });
+    }
+
+    public  void   execWriteOperator(final WriteOperator writeOperator){
+          execAfterInit(new AfterInitOperator<Void>() {
+            @Override
+            public Void exec() {
+                try {
+                    WritableConnection writableConnection=  connectionPoolManager.getWritableConnection();
+                    writeOperator.exec(writableConnection);
+                    connectionPoolManager.releaseWritableConnection();
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }finally {
+                    return null;
+                }
+            }
+        });
+    }
+
+    public  int getRestWritableConnectionCount() {
+        return execAfterInit(new AfterInitOperator<Integer>() {
+            @Override
+            public Integer exec() {
+                return  connectionPoolManager.getRestWritableConnectionCount();
+            }
+        });
+    }
+
+    public  int getRestReadableConnectionCount() {
+        return  execAfterInit(new AfterInitOperator<Integer>() {
+            @Override
+            public Integer exec() {
+                return    connectionPoolManager.getRestReadableConnectionCount();
+            }
+        });
+    }
+
+    @Deprecated
+    public WritableConnection getWritableConnection(){
+        return  execAfterInit(new AfterInitOperator<WritableConnection>() {
+            @Override
+            public WritableConnection exec() {
+                return connectionPoolManager.getWritableConnection();
+            }
+        });
+    }
+
+    @Deprecated
+    public void releaseWritableConnection(){
+        execAfterInit(new AfterInitOperator<Void>() {
+            @Override
+            public Void exec() {
+                connectionPoolManager.releaseWritableConnection();
+                return null;
+            }
+        });
+    }
+
+    @Deprecated
+    public ReadableConnection getReadableDatabase(){
+        return  execAfterInit(new AfterInitOperator<ReadableConnection>() {
+            @Override
+            public ReadableConnection exec() {
                 return connectionPoolManager.getReadableConnection();
             }
         });
     }
 
+    @Deprecated
     public void releaseReadableDatabase(final ReadableConnection readableConnection){
-        execAfterInit(new AfterInitOperator() {
+        execAfterInit(new AfterInitOperator<Void>() {
             @Override
-            public Object exec() {
+            public Void exec() {
                 connectionPoolManager.releaseReadConnection(readableConnection);
                 return null;
             }
         });
     }
 
-    public WritableConnection getWritableConnection(){
-        return  (WritableConnection)execAfterInit(new AfterInitOperator() {
-            @Override
-            public Object exec() {
-                return connectionPoolManager.getWritableConnection();
-            }
-        });
-    }
-
     public void  destroy(){
-        execAfterInit(new AfterInitOperator() {
+        execAfterInit(new AfterInitOperator<Void>() {
             @Override
-            public Object exec() {
+            public Void exec() {
                 connectionPoolManager.destroy();
                 return null;
             }
         });
     }
 
-    public void releaseWritableConnection(){
-        execAfterInit(new AfterInitOperator() {
-            @Override
-            public Object exec() {
-                 connectionPoolManager.releaseWritableConnection();
-                return null;
-            }
-        });
-    }
-
-    public  int getRestReadableConnectionCount() {
-        return (Integer) execAfterInit(new AfterInitOperator() {
-            @Override
-            public Object exec() {
-              return    connectionPoolManager.getRestReadableConnectionCount();
-            }
-        });
-    }
-    public  int getRestWritableConnectionCount() {
-        return (Integer) execAfterInit(new AfterInitOperator() {
-            @Override
-            public Object exec() {
-                return  connectionPoolManager.getRestWritableConnectionCount();
-            }
-        });
-    }
-
-    private Object execAfterInit(AfterInitOperator afterInitOperator) {
-        Object object=null;
+    private  <T> T execAfterInit(AfterInitOperator<T> afterInitOperator) {
+        T object=null;
         try {
             initLock.lock();
             if (initFlag) {
@@ -138,8 +179,9 @@ public class RWSDatabaseManager {
 
     }
 
-    private interface AfterInitOperator {
-        public Object exec();
+    private interface AfterInitOperator<T> {
+        public T exec();
     }
+
 }
 
