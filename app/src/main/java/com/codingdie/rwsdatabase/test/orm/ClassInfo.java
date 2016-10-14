@@ -1,5 +1,7 @@
 package com.codingdie.rwsdatabase.test.orm;
 
+import com.codingdie.rwsdatabase.orm.annotation.Table;
+
 import java.util.List;
 
 /**

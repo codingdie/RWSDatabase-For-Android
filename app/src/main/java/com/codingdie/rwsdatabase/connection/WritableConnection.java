@@ -38,6 +38,17 @@ public class WritableConnection extends SQLiteConnection {
         object.getClass();
     }
 
+    //TODO
+    @Deprecated
+    public <T> void insertObject(T object ) {
+        object.getClass();
+    }
+    //TODO
+    @Deprecated
+    public <T> void updateObject(T object ) {
+        object.getClass();
+    }
+
     public void beginTransaction() {
         this.sqLiteDatabase.beginTransaction();
     }
