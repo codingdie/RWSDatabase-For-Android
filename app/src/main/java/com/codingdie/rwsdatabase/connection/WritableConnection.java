@@ -51,18 +51,22 @@ public class WritableConnection extends ReadableConnection {
         object.getClass();
     }
 
+    @Deprecated
     public void beginTransaction() {
         this.sqLiteDatabase.beginTransaction();
     }
 
+    @Deprecated
     public void endTransaction() {
         this.sqLiteDatabase.endTransaction();
     }
 
+    @Deprecated
     public void setTransactionSuccessful() {
         this.sqLiteDatabase.setTransactionSuccessful();
     }
 
+    @Deprecated
     public void setVersion(int version) {
         this.sqLiteDatabase.setVersion(version);
     }
