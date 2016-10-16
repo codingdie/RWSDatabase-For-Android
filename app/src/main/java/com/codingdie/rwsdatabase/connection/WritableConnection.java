@@ -5,10 +5,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 import com.codingdie.rwsdatabase.exception.RWSOrmException;
-import com.codingdie.rwsdatabase.orm.RWSObjectUtil;
 import com.codingdie.rwsdatabase.orm.cache.RWSClassInfoCache;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSPropertyInfo;
+import com.codingdie.rwsdatabase.orm.util.RWSObjectUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -18,6 +18,17 @@ import java.util.List;
  * Created by xupeng on 2016/8/26.
  */
 public class WritableConnection extends ReadableConnection {
+
+    protected static WritableConnection createWritableConnection(String dbPath, int index) {
+        WritableConnection writableConnection = new WritableConnection();
+        writableConnection.setInUsing(false);
+        writableConnection.setWritable(true);
+        writableConnection.setIndex(index);
+        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.CREATE_IF_NECESSARY);
+        sqLiteDatabase.enableWriteAheadLogging();
+        writableConnection.setSqLiteDatabase(sqLiteDatabase);
+        return writableConnection;
+    }
 
     public void execWriteSQL(String sql, Object[] param) {
         this.sqLiteDatabase.execSQL(sql, param);
@@ -85,70 +96,69 @@ public class WritableConnection extends ReadableConnection {
         this.insertObjectIntoTable(object, rwsClassInfo.getTableName());
     }
 
-
     public <T> void updateObject(T object) {
         if (RWSObjectUtil.checkKeyPropertyIsNull(object)) {
             throw new RWSOrmException(RWSOrmException.KEY_PROPERTY_IS_NULL);
         }
-
         RWSClassInfo rwsClassInfo = RWSClassInfoCache.getInstance().getRWSClassInfo(object.getClass());
         String tableName = rwsClassInfo.getTableName();
         if (TextUtils.isEmpty(tableName)) {
             throw new RWSOrmException(RWSOrmException.NO_RWSTABLE_ANNOTATION);
         }
+        if (!rwsClassInfo.hasKeyProperty()) {
+            throw new RWSOrmException(RWSOrmException.NO_KEY_PROPERTY);
+        }
         try {
             RWSTableInfo rwsTableInfo = RWSTableCache.getInstance().getRWSClassInfo(tableName, this);
-            ContentValues contentValues=new ContentValues();
+            ContentValues contentValues = new ContentValues();
 
             for (RWSColumInfo colum : rwsTableInfo.getColums()) {
-
-                Object value=null;
-                RWSPropertyInfo relatedRwsPropertyInfo=null;
-                for (RWSPropertyInfo rwsPropertyInfo : rwsClassInfo.getProperties()) {
-                    if (rwsPropertyInfo.getAlias().contains(colum.getName())) {
-                        Field field = rwsPropertyInfo.getField();
-                        field.setAccessible(true);
-                        value=field.get(object);
-                        relatedRwsPropertyInfo=rwsPropertyInfo;
-                        break;
-                    }
-                }
-                if(value!=null){
-                    if (relatedRwsPropertyInfo == null) {
-                          if(relatedRwsPropertyInfo.isKey()){
-                              continue;
-                          }
-                    }
-                     if(value instanceof  Integer){
-                         contentValues.put(colum.getName(),(Integer)value);
-                     }else  if(value instanceof  Long){
-                         contentValues.put(colum.getName(),(Long)value);
-                     }else  if(value instanceof  Float){
-                         contentValues.put(colum.getName(),(Float)value);
-                     }else  if(value instanceof  String){
-                         contentValues.put(colum.getName(),(String)value);
-                     }else  if(value instanceof  Short){
-                         contentValues.put(colum.getName(),(Short)value);
-                     } else  if(value instanceof  Double){
-                         contentValues.put(colum.getName(),(Double)value);
-                     } else  if(value instanceof  byte[]){
-                         contentValues.put(colum.getName(),(byte[])value);
-                     }else  if(value instanceof  Byte){
-                         contentValues.put(colum.getName(),(Byte)value);
-                     }
-                }else{
-                    if (relatedRwsPropertyInfo == null) {
-                        if(relatedRwsPropertyInfo.isKey()){
-                            continue;
-                        }
-                    }
+                RWSPropertyInfo relatedRwsPropertyInfo = rwsClassInfo.getProperty(colum.getName());
+                if (relatedRwsPropertyInfo == null) {
                     contentValues.putNull(colum.getName());
+                } else {
+                    if (relatedRwsPropertyInfo.isKey()) {
+                        continue;
+                    }
+                    Field field = relatedRwsPropertyInfo.getField();
+                    field.setAccessible(true);
+                    putValueIntoContentValues(contentValues, colum.getName(), field.get(object));
                 }
-
             }
-//            this.sqLiteDatabase.update(tableName,contentValues,)
+            List<RWSPropertyInfo> rwsKeyPropertyInfos = rwsClassInfo.getKeyPropertys();
+            List<String> keyPropertyValues = new ArrayList<String>();
+            String whereClause = "";
+            for (RWSPropertyInfo rwsPropertyInfo : rwsKeyPropertyInfos) {
+                whereClause += rwsPropertyInfo.getName() + "=? and";
+                Field field = rwsPropertyInfo.getField();
+                field.setAccessible(true);
+                keyPropertyValues.add(String.valueOf(field.get(object)));
+            }
+            this.sqLiteDatabase.update(tableName, contentValues, whereClause, keyPropertyValues.toArray(new String[]{}));
         } catch (IllegalAccessException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    private void putValueIntoContentValues(ContentValues contentValues, String key, Object value) {
+        if (value == null) {
+            contentValues.putNull(key);
+        } else if (value instanceof Integer) {
+            contentValues.put(key, (Integer) value);
+        } else if (value instanceof Long) {
+            contentValues.put(key, (Long) value);
+        } else if (value instanceof Float) {
+            contentValues.put(key, (Float) value);
+        } else if (value instanceof String) {
+            contentValues.put(key, (String) value);
+        } else if (value instanceof Short) {
+            contentValues.put(key, (Short) value);
+        } else if (value instanceof Double) {
+            contentValues.put(key, (Double) value);
+        } else if (value instanceof byte[]) {
+            contentValues.put(key, (byte[]) value);
+        } else if (value instanceof Byte) {
+            contentValues.put(key, (Byte) value);
         }
     }
 
@@ -170,17 +180,6 @@ public class WritableConnection extends ReadableConnection {
     @Deprecated
     public void setVersion(int version) {
         this.sqLiteDatabase.setVersion(version);
-    }
-
-    protected static WritableConnection createWritableConnection(String dbPath, int index) {
-        WritableConnection writableConnection = new WritableConnection();
-        writableConnection.setInUsing(false);
-        writableConnection.setWritable(true);
-        writableConnection.setIndex(index);
-        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.CREATE_IF_NECESSARY);
-        sqLiteDatabase.enableWriteAheadLogging();
-        writableConnection.setSqLiteDatabase(sqLiteDatabase);
-        return writableConnection;
     }
 
 

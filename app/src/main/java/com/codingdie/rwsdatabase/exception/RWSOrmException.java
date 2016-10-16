@@ -7,6 +7,7 @@ public class RWSOrmException extends  RuntimeException {
 
     public  static  String KEY_PROPERTY_IS_NULL="the inserted or updateed  object key property can't be null or 0";
     public  static  String NO_RWSTABLE_ANNOTATION="the inserted or updateed object must has RWSTable annotation  ";
+    public  static  String NO_KEY_PROPERTY="the updateed object must has at least one  key property   ";
 
     public RWSOrmException(String detailMessage) {
         super(detailMessage);

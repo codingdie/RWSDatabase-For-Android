@@ -2,7 +2,7 @@ package com.codingdie.rwsdatabase.connection;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.codingdie.rwsdatabase.orm.RWSCursorResultReflectUtil;
+import com.codingdie.rwsdatabase.orm.util.RWSCursorResultReflectUtil;
 
 import java.util.List;
 

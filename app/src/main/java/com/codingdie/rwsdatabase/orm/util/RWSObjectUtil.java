@@ -10,9 +10,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by xupeng on 2016/9/28.
+ * Created by xupeng on 2016/10/16.
  */
-public class RWSReflectUtil {
+public class RWSObjectUtil {
+
+    public static <T> boolean checkKeyPropertyIsNull(T obj) {
+        try {
+            RWSClassInfo RWSClassInfo = RWSClassInfoCache.getInstance().getRWSClassInfo(obj.getClass());
+            List<Integer> integers = RWSClassInfo.getKeyPropertyIndexes();
+            List<RWSPropertyInfo> RWSPropertyInfoList = RWSClassInfo.getProperties();
+
+            if (integers != null && integers.size() != 0) {
+                for (int i : integers) {
+                    RWSPropertyInfo RWSPropertyInfo = RWSPropertyInfoList.get(i);
+                    Field field = RWSPropertyInfo.getField();
+                    field.setAccessible(true);
+                    Object o = field.get(obj);
+                    if(o==null){
+                        return  true;
+                    }
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_STRING){
+                        if(((String) o).length()==0){
+                            return  true;
+                        }
+                    }
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_SHORT|| RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_INT){
+                        if(((Comparable)o).compareTo(0)==0){
+                            return  true;
+                        }
+                    }
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_LONG){
+                        if(((Comparable)o).compareTo(0L)==0){
+                            return  true;
+                        }
+                    }
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_FLOAT){
+                        if(((Comparable)o).compareTo(0.00f)==0){
+                            return  true;
+                        }
+                    }
+                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_DOUBLE){
+                        if(((Comparable)o).compareTo(0.00d)==0){
+                            return  true;
+                        }
+                    }
+                }
+            }
+            return  false;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return true;
+        }
+
+    }
+
     public static List<RWSPropertyInfo> getAllProperty(Class aClass){
         List<RWSPropertyInfo> RWSPropertyInfos =new ArrayList<RWSPropertyInfo>();
         Field[] fields= aClass.getDeclaredFields();
@@ -47,7 +98,7 @@ public class RWSReflectUtil {
             for(int i=0;i<fields.length;i++){
                 Field field=fields[i];
                 if(field.getGenericType().toString().startsWith("java.util.List<")){
-                  continue;
+                    continue;
                 }
 
                 if(RWSPropertyInfo.checkFieldCanOrm(field.getGenericType().toString())){
@@ -117,9 +168,9 @@ public class RWSReflectUtil {
                 RWSPropertyInfo RWSPropertyInfo = RWSPropertyInfos.get(index);
                 Field field= RWSPropertyInfo.getField();
                 field.setAccessible(true);
-                 if(RWSPropertyInfo.getType()> RWSPropertyInfo.PROPERTYTYPE_SHORT&& RWSPropertyInfo.getType()<= RWSPropertyInfo.PROPERTYTYPE_STRING){
-                     Object avalue=  field.get(a);
-                     Object bvalue= field.get(b);
+                if(RWSPropertyInfo.getType()> RWSPropertyInfo.PROPERTYTYPE_SHORT&& RWSPropertyInfo.getType()<= RWSPropertyInfo.PROPERTYTYPE_STRING){
+                    Object avalue=  field.get(a);
+                    Object bvalue= field.get(b);
                     if((avalue==null&&bvalue!=null)||(avalue!=null&&bvalue==null)||(avalue!=null&&bvalue!=null&&!avalue.equals(bvalue))){
                         flag=false;
                     }
@@ -133,66 +184,4 @@ public class RWSReflectUtil {
 
     }
 
-    public static void main(String[] args) throws  Exception{
-       TestClass testClass2=new  TestClass();
-        testClass2.setString("a");
-        testClass2.setIntValue(1);
-        testClass2.setIntegerValue(1);
-        TestClass testClass1=new  TestClass();
-        testClass1.setString("a");
-        testClass1.setIntValue(1);
-        testClass1.setIntegerValue(1);
-        System.out.println(compareObjectWithoutArrayProp(testClass1,testClass2));
-    }
-
-    public static   class TestClass{
-        @RWSColum(isKey = true)
-        private String string;
-        @RWSColum(isKey = true)
-        private int intValue;
-        @RWSColum(isKey = true)
-        private Integer integerValue;
-        @RWSColum(isKey = true)
-        private float floatValue;
-        @RWSColum(isKey = true)
-        private Float FloatValue;
-        private double doubleValue;
-
-        public String getString() {
-            return string;
-        }
-
-        public void setString(String string) {
-            this.string = string;
-        }
-
-        public float getFloatValue() {
-            return floatValue;
-        }
-
-        public void setFloatValue(Float floatValue) {
-            FloatValue = floatValue;
-        }
-
-        public void setFloatValue(float floatValue) {
-            this.floatValue = floatValue;
-        }
-
-        public int getIntValue() {
-            return intValue;
-        }
-
-        public void setIntValue(int intValue) {
-            this.intValue = intValue;
-        }
-
-        public Integer getIntegerValue() {
-            return integerValue;
-        }
-
-        public void setIntegerValue(Integer integerValue) {
-            this.integerValue = integerValue;
-        }
-    }
 }
-

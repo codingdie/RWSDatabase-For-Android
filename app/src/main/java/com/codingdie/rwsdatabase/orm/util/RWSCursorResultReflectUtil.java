@@ -1,11 +1,10 @@
-package com.codingdie.rwsdatabase.orm;
+package com.codingdie.rwsdatabase.orm.util;
 
 import android.database.Cursor;
 
 import com.codingdie.rwsdatabase.orm.cache.RWSClassInfoCache;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSPropertyInfo;
-import com.codingdie.rwsdatabase.orm.util.RWSReflectUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class RWSCursorResultReflectUtil {
                     if(objFinal==null){
                         objFinal=tmp;
                     }else{
-                        if(!RWSReflectUtil.compareObjectWithoutArrayProp(tmp,objFinal)){
+                        if(!RWSObjectUtil.compareObjectWithoutArrayProp(tmp,objFinal)){
                              break;
                         }
                         addArrayPropertyFromBToA(objFinal,tmp);
@@ -56,7 +55,7 @@ public class RWSCursorResultReflectUtil {
                     obj=tmp;
                     list.add(obj);
                 }else{
-                    if(!RWSReflectUtil.compareObjectWithoutArrayProp(tmp,obj)){
+                    if(!RWSObjectUtil.compareObjectWithoutArrayProp(tmp,obj)){
                         obj=tmp;
                         list.add(obj);
                     }
@@ -83,7 +82,7 @@ public class RWSCursorResultReflectUtil {
                          for(Object newItem :listb){
                              boolean flag=false;
                              for(Object item :lista){
-                                 if(RWSReflectUtil.compareObjectWithoutArrayProp(item,newItem)){
+                                 if(RWSObjectUtil.compareObjectWithoutArrayProp(item,newItem)){
                                      flag=true;
                                      break;
                                  }
