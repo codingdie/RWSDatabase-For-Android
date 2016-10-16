@@ -3,6 +3,14 @@ package com.codingdie.rwsdatabase.connection;
 import android.content.ContentValues;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import com.codingdie.rwsdatabase.exception.RWSOrmException;
+import com.codingdie.rwsdatabase.orm.RWSObjectUtil;
+import com.codingdie.rwsdatabase.orm.cache.RWSClassInfoCache;
+import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
+import com.codingdie.rwsdatabase.orm.cache.model.RWSPropertyInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by xupen on 2016/8/26.
@@ -33,16 +41,39 @@ public class WritableConnection extends ReadableConnection {
         return this.sqLiteDatabase.delete(table, whereClause, whereArgs);
     }
 
-    //TODO
-    @Deprecated
-    public <T> void insertObjectIntoTable(T object ,String tableName) {
-        object.getClass();
+    public <T> void insertObjectIntoTable(T object ,String tableName)   {
+        if(RWSObjectUtil.checkKeyPropertyIsNull(object)){
+            throw  new RWSOrmException(RWSOrmException.KEY_PROPERTY_IS_NULL);
+        }
+        try {
+            RWSTable rwsTable=  RWSTableCache.getInstance().getRWSClassInfo(tableName,this);
+            RWSClassInfo rwsClassInfo= RWSClassInfoCache.getInstance().getRWSClassInfo(object.getClass());
+            String comlumStr="";
+            String placeholderStr="";
+            List<Object> values=new ArrayList();
+            for(RWSColum colum :rwsTable.getColums()){
+                for(RWSPropertyInfo rwsPropertyInfo: rwsClassInfo.getProperties()){
+                    if(rwsPropertyInfo.getAlias().contains(colum.getName())){
+                        values.add(rwsPropertyInfo.getField().get(object));
+                        break;
+                    }
+                }
+                comlumStr+=colum.getName()+",";
+                placeholderStr+="?,";
+            }
+            if(comlumStr.length()>0){
+                comlumStr.substring(0,comlumStr.length()-1);
+                placeholderStr.substring(0,placeholderStr.length()-1);
+            }
+            this.sqLiteDatabase.execSQL("insert into "+tableName+" ("+comlumStr+") values ("+placeholderStr+")",values.toArray());
+        }catch (IllegalAccessException ex){
+            ex.printStackTrace();
+        }
     }
 
-    //TODO
-    @Deprecated
     public <T> void insertObject(T object ) {
-        object.getClass();
+        RWSClassInfo rwsClassInfo= RWSClassInfoCache.getInstance().getRWSClassInfo(object.getClass());
+       this.insertObjectIntoTable(object,rwsClassInfo.getTableName());
     }
 
     //TODO

@@ -1,7 +1,7 @@
 package com.codingdie.rwsdatabase.orm.util;
 
 import com.codingdie.rwsdatabase.orm.annotation.RWSColum;
-import com.codingdie.rwsdatabase.orm.cache.RWSClassCache;
+import com.codingdie.rwsdatabase.orm.cache.RWSClassInfoCache;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSPropertyInfo;
 
@@ -111,7 +111,7 @@ public class RWSReflectUtil {
                 return false;
             }
             boolean flag=true;
-            RWSClassInfo aRWSClassInfo =   RWSClassCache.getInstance().getClassInfo(a.getClass());
+            RWSClassInfo aRWSClassInfo =   RWSClassInfoCache.getInstance().getRWSClassInfo(a.getClass());
             List<RWSPropertyInfo> RWSPropertyInfos = aRWSClassInfo.getNotArrayProperties();
             for(int index = 0; index< RWSPropertyInfos.size(); index++){
                 RWSPropertyInfo RWSPropertyInfo = RWSPropertyInfos.get(index);

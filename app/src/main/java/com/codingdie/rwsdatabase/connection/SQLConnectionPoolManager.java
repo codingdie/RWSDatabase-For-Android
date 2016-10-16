@@ -1,7 +1,7 @@
 package com.codingdie.rwsdatabase.connection;
 
-import com.codingdie.rwsdatabase.connection.Imp.SQLConnectionPoolManagerImp;
-import com.codingdie.rwsdatabase.connection.Imp.InitSQLiteDatabaseImp;
+import com.codingdie.rwsdatabase.connection.Impl.SQLConnectionPoolManagerImp;
+import com.codingdie.rwsdatabase.connection.Impl.InitSQLiteDatabaseImp;
 import com.codingdie.rwsdatabase.connection.model.InitSQLiteConnectionPoolConfig;
 import com.codingdie.rwsdatabase.log.RWSLogUtil;
 

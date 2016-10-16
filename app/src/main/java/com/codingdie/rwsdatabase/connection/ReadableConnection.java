@@ -40,6 +40,12 @@ public class ReadableConnection extends  SQLiteConnection {
         return RWSCursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass,ignoreProps);
     }
 
-
+    protected RWSTable getTableInfo(String tableName) {
+        RWSTable rwsTable=new RWSTable();
+        rwsTable.setName(tableName);
+        List<RWSColum> columList=   this.queryObjectList("pragma table_info([?])",new String[]{tableName},RWSColum.class);
+        rwsTable.setColums(columList);
+        return  rwsTable;
+    }
 
 }

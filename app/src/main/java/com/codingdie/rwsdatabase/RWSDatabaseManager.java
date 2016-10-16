@@ -2,7 +2,7 @@ package com.codingdie.rwsdatabase;
 
 import android.content.Context;
 import android.os.Handler;
-import com.codingdie.rwsdatabase.connection.Imp.InitSQLiteDatabaseImp;
+import com.codingdie.rwsdatabase.connection.Impl.InitSQLiteDatabaseImp;
 import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.codingdie.rwsdatabase.connection.SQLConnectionPoolManager;
 import com.codingdie.rwsdatabase.connection.WritableConnection;

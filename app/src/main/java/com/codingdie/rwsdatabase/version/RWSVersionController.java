@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase.version;
 import android.os.Handler;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.log.RWSLogUtil;
-import com.codingdie.rwsdatabase.version.exception.RWSVersionException;
+import com.codingdie.rwsdatabase.exception.RWSVersionException;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 import com.codingdie.rwsdatabase.version.imp.RWSVersionControllerInterface;
 

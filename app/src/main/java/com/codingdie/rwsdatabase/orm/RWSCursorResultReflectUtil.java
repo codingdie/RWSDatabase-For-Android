@@ -2,7 +2,7 @@ package com.codingdie.rwsdatabase.orm;
 
 import android.database.Cursor;
 
-import com.codingdie.rwsdatabase.orm.cache.RWSClassCache;
+import com.codingdie.rwsdatabase.orm.cache.RWSClassInfoCache;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSPropertyInfo;
 import com.codingdie.rwsdatabase.orm.util.RWSReflectUtil;
@@ -72,7 +72,7 @@ public class RWSCursorResultReflectUtil {
 
     private static void addArrayPropertyFromBToA(Object a, Object b) {
         try {
-             List<RWSPropertyInfo> RWSPropertyInfos = RWSClassCache.getInstance().getClassInfo(a.getClass()).getArrayProperties();
+             List<RWSPropertyInfo> RWSPropertyInfos = RWSClassInfoCache.getInstance().getRWSClassInfo(a.getClass()).getArrayProperties();
              if(RWSPropertyInfos !=null&& RWSPropertyInfos.size()>0){
                  for(RWSPropertyInfo RWSPropertyInfo : RWSPropertyInfos){
                     Field field= RWSPropertyInfo.getField();
@@ -106,7 +106,7 @@ public class RWSCursorResultReflectUtil {
     private static <T> T fillOneObject(Cursor cursor, Class<T> tClass) {
         try {
             Object o = tClass.newInstance();
-            RWSClassInfo RWSClassInfo = RWSClassCache.getInstance().getClassInfo(tClass);
+            RWSClassInfo RWSClassInfo = RWSClassInfoCache.getInstance().getRWSClassInfo(tClass);
             if (RWSClassInfo.getProperties() != null && RWSClassInfo.getProperties().size() > 0) {
                 for (RWSPropertyInfo RWSPropertyInfo : RWSClassInfo.getProperties()) {
                     List<String> alias = RWSPropertyInfo.getAlias();
@@ -149,7 +149,7 @@ public class RWSCursorResultReflectUtil {
 
                 }
             }
-           if(checkKeyPropertyIsNull(o)==true){
+           if(RWSObjectUtil.checkKeyPropertyIsNull(o)==true){
                return  null;
            }
             return (T) o;
@@ -160,55 +160,7 @@ public class RWSCursorResultReflectUtil {
 
     }
 
-    private static boolean checkKeyPropertyIsNull(Object obj) {
-        try {
-            RWSClassInfo RWSClassInfo = RWSClassCache.getInstance().getClassInfo(obj.getClass());
-            List<Integer> integers = RWSClassInfo.getKeyPropertyIndexes();
-            List<RWSPropertyInfo> RWSPropertyInfoList = RWSClassInfo.getProperties();
 
-            if (integers != null && integers.size() != 0) {
-                for (int i : integers) {
-                    RWSPropertyInfo RWSPropertyInfo = RWSPropertyInfoList.get(i);
-                    Field field = RWSPropertyInfo.getField();
-                    field.setAccessible(true);
-                    Object o = field.get(obj);
-                    if(o==null){
-                        return  true;
-                    }
-                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_STRING){
-                        if(((String) o).length()==0){
-                            return  true;
-                        }
-                    }
-                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_SHORT|| RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_INT){
-                        if(((Comparable)o).compareTo(0)==0){
-                            return  true;
-                        }
-                    }
-                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_LONG){
-                        if(((Comparable)o).compareTo(0L)==0){
-                            return  true;
-                        }
-                    }
-                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_FLOAT){
-                        if(((Comparable)o).compareTo(0.00f)==0){
-                            return  true;
-                        }
-                    }
-                    if(RWSPropertyInfo.getType()== RWSPropertyInfo.PROPERTYTYPE_DOUBLE){
-                        if(((Comparable)o).compareTo(0.00d)==0){
-                            return  true;
-                        }
-                    }
-                }
-            }
-            return  false;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return true;
-        }
-
-    }
 
     private static int getIndexFromCousorByAlias(List<String> alias, Cursor cursor) {
         int index=-1;

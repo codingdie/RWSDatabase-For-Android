@@ -6,21 +6,21 @@ import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
 /**
  * Created by xupen on 2016/9/28.
  */
-public class RWSClassCache extends  LruCache<Class,RWSClassInfo>{
-    private  static RWSClassCache instance;
+public class RWSClassInfoCache extends  LruCache<Class,RWSClassInfo>{
+    private  static RWSClassInfoCache instance;
     public static int maxCacheCount=100;
 
-    public RWSClassCache(int maxSize) {
+    public RWSClassInfoCache(int maxSize) {
         super(maxSize);
     }
 
-    public  static synchronized RWSClassCache getInstance(){
+    public  static synchronized RWSClassInfoCache getInstance(){
         if(instance ==null){
-          instance =new RWSClassCache(maxCacheCount);
+          instance =new RWSClassInfoCache(maxCacheCount);
         }
        return instance;
     }
-    public RWSClassInfo getClassInfo(Class aClass){
+    public RWSClassInfo getRWSClassInfo(Class aClass){
         RWSClassInfo RWSClassInfo = get(aClass);
         if(RWSClassInfo ==null){
             RWSClassInfo = RWSClassInfo.newInstance(aClass);

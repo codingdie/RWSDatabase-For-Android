@@ -2,7 +2,7 @@ package com.codingdie.rwsdatabase;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import com.codingdie.rwsdatabase.exception.RWSDatabaseException;
+import com.codingdie.rwsdatabase.exception.RWSDatabaseInitException;
 import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
 
 import java.io.File;
@@ -93,7 +93,7 @@ public class RWSDatabaseCreator {
             File dbFile = new File(finalDBPath);
             dbFile.getParentFile().mkdirs();
             if(!dbFile.getParentFile().exists()){
-                throw new RWSDatabaseException(RWSDatabaseException.PATH_ERROR);
+                throw new RWSDatabaseInitException(RWSDatabaseInitException.PATH_ERROR);
             }
         }else{
             context.getDatabasePath(dbName).getParentFile().mkdirs();

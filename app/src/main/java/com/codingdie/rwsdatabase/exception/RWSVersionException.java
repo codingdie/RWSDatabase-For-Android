@@ -1,4 +1,4 @@
-package com.codingdie.rwsdatabase.version.exception;
+package com.codingdie.rwsdatabase.exception;
 
 /**
  * Created by xupen on 2016/8/26.

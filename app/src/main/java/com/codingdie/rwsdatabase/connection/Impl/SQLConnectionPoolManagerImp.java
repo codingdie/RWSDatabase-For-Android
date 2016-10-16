@@ -1,4 +1,4 @@
-package com.codingdie.rwsdatabase.connection.Imp;
+package com.codingdie.rwsdatabase.connection.Impl;
 
 import com.codingdie.rwsdatabase.connection.ReadableConnection;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
