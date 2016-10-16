@@ -1,7 +1,7 @@
 package com.codingdie.rwsdatabase.exception;
 
 /**
- * Created by xupen on 2016/8/26.
+ * Created by xupeng on 2016/8/26.
  */
 public class RWSVersionException extends  RuntimeException {
 

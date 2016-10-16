@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
 /**
- * Created by xupen on 2016/8/22.
+ * Created by xupeng on 2016/8/22.
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

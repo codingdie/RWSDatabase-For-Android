@@ -12,7 +12,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by xupen on 2016/8/22.
+ * Created by xupeng on 2016/8/22.
  */
 public class SQLConnectionPoolManager implements SQLConnectionPoolManagerImp {
     private List<ReadableConnection> readConnectionsPool;

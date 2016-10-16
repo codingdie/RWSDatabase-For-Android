@@ -4,7 +4,7 @@ import android.util.LruCache;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
 
 /**
- * Created by xupen on 2016/9/28.
+ * Created by xupeng on 2016/9/28.
  */
 public class RWSClassInfoCache extends  LruCache<Class,RWSClassInfo>{
     private  static RWSClassInfoCache instance;

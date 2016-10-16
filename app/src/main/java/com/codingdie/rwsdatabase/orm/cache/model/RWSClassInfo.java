@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by xupen on 2016/9/28.
+ * Created by xupeng on 2016/9/28.
  */
 public class RWSClassInfo {
 

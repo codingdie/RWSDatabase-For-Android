@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by xupen on 2016/8/22.
+ * Created by xupeng on 2016/8/22.
  */
 public class RWSColumInfo {
     private  String name;

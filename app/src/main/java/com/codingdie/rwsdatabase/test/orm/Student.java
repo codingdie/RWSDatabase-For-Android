@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase.test.orm;
 import com.codingdie.rwsdatabase.orm.annotation.RWSColum;
 
 /**
- * Created by xupen on 2016/10/12.
+ * Created by xupeng on 2016/10/12.
  */
 public class Student {
     @RWSColum(isKey = true)

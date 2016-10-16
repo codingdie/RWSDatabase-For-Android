@@ -5,7 +5,7 @@ import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.connection.model.InitSQLiteConnectionPoolConfig;
 
 /**
- * Created by xupen on 2016/8/22.
+ * Created by xupeng on 2016/8/22.
  */
 public  interface SQLConnectionPoolManagerImp {
 

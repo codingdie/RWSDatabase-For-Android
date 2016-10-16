@@ -6,7 +6,7 @@ import com.codingdie.rwsdatabase.orm.annotation.RWSTable;
 import java.util.List;
 
 /**
- * Created by xupen on 2016/10/12.
+ * Created by xupeng on 2016/10/12.
  */
 @RWSTable(name = "Class")
 public class ClassInfo {

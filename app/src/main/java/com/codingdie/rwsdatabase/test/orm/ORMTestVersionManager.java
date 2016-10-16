@@ -5,7 +5,7 @@ import com.codingdie.rwsdatabase.connection.WritableConnection;
 import java.util.Random;
 
 /**
- * Created by xupen on 2016/8/26.
+ * Created by xupeng on 2016/8/26.
  */
 public class ORMTestVersionManager {
 

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by xupen on 2016/8/26.
+ * Created by xupeng on 2016/8/26.
  */
 public class WritableConnection extends ReadableConnection {
 

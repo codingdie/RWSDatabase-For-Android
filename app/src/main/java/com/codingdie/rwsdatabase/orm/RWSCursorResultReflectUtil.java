@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by xupen on 2016/10/12.
+ * Created by xupeng on 2016/10/12.
  */
 public class RWSCursorResultReflectUtil {
 

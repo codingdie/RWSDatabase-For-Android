@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase.connection.model;
 import java.io.File;
 
 /**
- * Created by xupen on 2016/8/22.
+ * Created by xupeng on 2016/8/22.
  */
 public class InitSQLiteConnectionPoolConfig {
     private int  maxCount;

@@ -7,7 +7,7 @@ import com.codingdie.rwsdatabase.orm.RWSCursorResultReflectUtil;
 import java.util.List;
 
 /**
- * Created by xupen on 2016/8/26.
+ * Created by xupeng on 2016/8/26.
  */
 public class ReadableConnection extends  SQLiteConnection {
 

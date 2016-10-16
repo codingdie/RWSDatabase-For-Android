@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase.connection;
 import android.util.LruCache;
 
 /**
- * Created by xupen on 2016/9/28.
+ * Created by xupeng on 2016/9/28.
  */
 public class RWSTableCache extends  LruCache<String,RWSTableInfo>{
     private  static RWSTableCache instance;

@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase.connection;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
- * Created by xupen on 2016/8/22.
+ * Created by xupeng on 2016/8/22.
  */
 class SQLiteConnection   {
     protected boolean inUsing = false;

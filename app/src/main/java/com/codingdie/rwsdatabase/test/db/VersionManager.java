@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase.test.db;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 
 /**
- * Created by xupen on 2016/8/26.
+ * Created by xupeng on 2016/8/26.
  */
 public class VersionManager {
     public void  createDatabase(WritableConnection db){
