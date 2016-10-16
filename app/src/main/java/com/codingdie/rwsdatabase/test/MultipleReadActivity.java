@@ -16,7 +16,7 @@ import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.log.RWSLogUtil;
 import com.codingdie.rwsdatabase.test.db.SqliteHelper;
 import com.codingdie.rwsdatabase.test.db.VersionManager;
-import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
+import com.codingdie.rwsdatabase.version.proxy.UpgradeDatabaseListener;
 
 import java.io.File;
 import java.util.Timer;
@@ -96,8 +96,8 @@ public class MultipleReadActivity extends Activity {
                      writableConnection.beginTransaction();
 
                      for(int i=0;i<Integer.valueOf( dbSize.getText().toString());i++){
-                         sqLiteDatabase.execSQL("insertObject into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
-                         writableConnection.execWriteSQL("insertObject into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+                         sqLiteDatabase.execSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+                         writableConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
                      }
                      sqLiteDatabase.setTransactionSuccessful();
                      writableConnection.setTransactionSuccessful();

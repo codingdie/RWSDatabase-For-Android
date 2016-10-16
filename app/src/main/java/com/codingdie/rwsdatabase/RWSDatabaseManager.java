@@ -8,7 +8,7 @@ import com.codingdie.rwsdatabase.connection.SQLConnectionPoolManager;
 import com.codingdie.rwsdatabase.connection.WritableConnection;
 import com.codingdie.rwsdatabase.connection.model.InitSQLiteConnectionPoolConfig;
 import com.codingdie.rwsdatabase.version.RWSVersionController;
-import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
+import com.codingdie.rwsdatabase.version.proxy.UpgradeDatabaseListener;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by xupeng on 2016/8/26.
  */
-public class ReadableConnection extends  SQLiteConnection {
+public class ReadableConnection extends SQLiteConnection {
 
     protected static ReadableConnection createReadableConnection(String dbPath, int index) {
         ReadableConnection readableConnection = new ReadableConnection();
@@ -21,29 +21,42 @@ public class ReadableConnection extends  SQLiteConnection {
         readableConnection.setSqLiteDatabase(sqLiteDatabase);
         return readableConnection;
     }
-    public Cursor execReadSQL(String sql , String[] param){
-        return   this.sqLiteDatabase.rawQuery(sql ,param);
+
+    public Cursor execReadSQL(String sql, String[] param) {
+        return this.sqLiteDatabase.rawQuery(sql, param);
     }
 
     @Deprecated
     public Cursor query(String table, String[] columns, String selection,
                         String[] selectionArgs, String groupBy, String having,
                         String orderBy, String limit) {
-        return   this.sqLiteDatabase.query(table ,columns,selection,selectionArgs,groupBy,having,orderBy,limit);
+        return this.sqLiteDatabase.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
     }
 
-    public <T> T queryObject(String sql , String[] param,Class<T> tClass,String[]... ignoreProps){
-        return RWSCursorResultReflectUtil.toObject(this.execReadSQL(sql,param),tClass,ignoreProps);
+    public <T> T queryObject(String table, String[] columns, String selection,
+                             String[] selectionArgs, String groupBy, String having,
+                             String orderBy, String limit, Class<T> tClass, String[]... ignoreProps) {
+        return RWSCursorResultReflectUtil.toObject(this.sqLiteDatabase.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit), tClass, ignoreProps);
     }
 
-    public <E> List<E> queryObjectList(String sql , String[] param, Class<E> tClass, String[]... ignoreProps){
-        return RWSCursorResultReflectUtil.toList(this.execReadSQL(sql,param),tClass,ignoreProps);
+    public <T> T queryObject(String sql, String[] param, Class<T> tClass, String[]... ignoreProps) {
+        return RWSCursorResultReflectUtil.toObject(this.execReadSQL(sql, param), tClass, ignoreProps);
+    }
+
+    public <E> List<E> queryObjectList(String sql, String[] param, Class<E> tClass, String[]... ignoreProps) {
+        return RWSCursorResultReflectUtil.toList(this.execReadSQL(sql, param), tClass, ignoreProps);
+    }
+
+    public <E> List<E> queryObjectList(String table, String[] columns, String selection,
+                                       String[] selectionArgs, String groupBy, String having,
+                                       String orderBy, String limit, Class<E> tClass, String[]... ignoreProps) {
+        return RWSCursorResultReflectUtil.toList(this.sqLiteDatabase.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit), tClass, ignoreProps);
     }
 
     protected RWSTableInfo getTableInfo(String tableName) {
-        RWSTableInfo rwsTableInfo =new RWSTableInfo();
+        RWSTableInfo rwsTableInfo = new RWSTableInfo();
         rwsTableInfo.setName(tableName);
-        List<RWSColumInfo> columList=   this.queryObjectList("pragma table_info(["+tableName+"])",new String[]{},RWSColumInfo.class);
+        List<RWSColumInfo> columList = this.queryObjectList("pragma table_info([" + tableName + "])", new String[]{}, RWSColumInfo.class);
         rwsTableInfo.setColums(columList);
         return rwsTableInfo;
     }

@@ -55,7 +55,7 @@ public class TestArchiveRecordActivity extends Activity {
                     }
                 }
                 long end = System.currentTimeMillis();
-                System.out.println("db1 query:" + (end - begin) * 1.0 / 10);
+                System.out.println("db1 queryObject:" + (end - begin) * 1.0 / 10);
 
             }
         }).start();
@@ -79,7 +79,7 @@ public class TestArchiveRecordActivity extends Activity {
                     }
                 }
                 long end = System.currentTimeMillis();
-                System.out.println("db2 query:" + (end - begin) * 1.0 / 10);
+                System.out.println("db2 queryObject:" + (end - begin) * 1.0 / 10);
 
             }
         });

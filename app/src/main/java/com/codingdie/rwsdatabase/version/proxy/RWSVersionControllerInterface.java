@@ -1,4 +1,4 @@
-package com.codingdie.rwsdatabase.version.imp;
+package com.codingdie.rwsdatabase.version.proxy;
 
 import android.os.Handler;
 import com.codingdie.rwsdatabase.connection.WritableConnection;

@@ -44,17 +44,19 @@ public class WritableConnection extends ReadableConnection {
     }
 
     @Deprecated
-    public long insertObject(String table, String nullColumnHack, ContentValues values)
+    public long insert(String table, String nullColumnHack, ContentValues values)
             throws SQLException {
         return this.sqLiteDatabase.insertOrThrow(table, nullColumnHack, values);
     }
 
-    @Deprecated
     public int delete(String table, String whereClause, String[] whereArgs) {
         return this.sqLiteDatabase.delete(table, whereClause, whereArgs);
     }
 
-    public <T> void insertObjectIntoTable(T object, String tableName) {
+    public <T> void insertIntoTable(T object, String tableName) {
+        if (TextUtils.isEmpty(tableName)) {
+            throw new RWSOrmException(RWSOrmException.NO_RWSTABLE_ANNOTATION);
+        }
         if (RWSObjectUtil.checkKeyPropertyIsNull(object)) {
             throw new RWSOrmException(RWSOrmException.KEY_PROPERTY_IS_NULL);
         }
@@ -91,15 +93,16 @@ public class WritableConnection extends ReadableConnection {
         }
     }
 
-    public <T> void insertObject(T object) {
+    public <T> void insert(T object) {
         RWSClassInfo rwsClassInfo = RWSClassInfoCache.getInstance().getRWSClassInfo(object.getClass());
-        this.insertObjectIntoTable(object, rwsClassInfo.getTableName());
+        String tableName = rwsClassInfo.getTableName();
+        if (TextUtils.isEmpty(tableName)) {
+            throw new RWSOrmException(RWSOrmException.NO_RWSTABLE_ANNOTATION);
+        }
+        this.insertIntoTable(object, tableName);
     }
 
-    public <T> void updateObject(T object) {
-        if (RWSObjectUtil.checkKeyPropertyIsNull(object)) {
-            throw new RWSOrmException(RWSOrmException.KEY_PROPERTY_IS_NULL);
-        }
+    public <T> int update(T object) {
         RWSClassInfo rwsClassInfo = RWSClassInfoCache.getInstance().getRWSClassInfo(object.getClass());
         String tableName = rwsClassInfo.getTableName();
         if (TextUtils.isEmpty(tableName)) {
@@ -108,6 +111,10 @@ public class WritableConnection extends ReadableConnection {
         if (!rwsClassInfo.hasKeyProperty()) {
             throw new RWSOrmException(RWSOrmException.NO_KEY_PROPERTY);
         }
+        if (RWSObjectUtil.checkKeyPropertyIsNull(object)) {
+            throw new RWSOrmException(RWSOrmException.KEY_PROPERTY_IS_NULL);
+        }
+        int affectCount=0;
         try {
             RWSTableInfo rwsTableInfo = RWSTableCache.getInstance().getRWSClassInfo(tableName, this);
             ContentValues contentValues = new ContentValues();
@@ -134,10 +141,46 @@ public class WritableConnection extends ReadableConnection {
                 field.setAccessible(true);
                 keyPropertyValues.add(String.valueOf(field.get(object)));
             }
-            this.sqLiteDatabase.update(tableName, contentValues, whereClause, keyPropertyValues.toArray(new String[]{}));
+            whereClause=whereClause.substring(0,whereClause.length()-3);
+            affectCount=this.sqLiteDatabase.update(tableName, contentValues, whereClause, keyPropertyValues.toArray(new String[]{}));
         } catch (IllegalAccessException ex) {
             ex.printStackTrace();
+        }finally {
+            return affectCount;
         }
+    }
+
+    public <T>  int delete(T object) {
+        RWSClassInfo rwsClassInfo = RWSClassInfoCache.getInstance().getRWSClassInfo(object.getClass());
+        String tableName = rwsClassInfo.getTableName();
+        if (TextUtils.isEmpty(tableName)) {
+            throw new RWSOrmException(RWSOrmException.NO_RWSTABLE_ANNOTATION);
+        }
+        if (!rwsClassInfo.hasKeyProperty()) {
+            throw new RWSOrmException(RWSOrmException.NO_KEY_PROPERTY);
+        }
+        if (RWSObjectUtil.checkKeyPropertyIsNull(object)) {
+            throw new RWSOrmException(RWSOrmException.KEY_PROPERTY_IS_NULL);
+        }
+        int affectCount=0;
+        try {
+            List<RWSPropertyInfo> rwsKeyPropertyInfos = rwsClassInfo.getKeyPropertys();
+            List<String> keyPropertyValues = new ArrayList<String>();
+            String whereClause = "";
+            for (RWSPropertyInfo rwsPropertyInfo : rwsKeyPropertyInfos) {
+                whereClause += rwsPropertyInfo.getName() + "=? and";
+                Field field = rwsPropertyInfo.getField();
+                field.setAccessible(true);
+                keyPropertyValues.add(String.valueOf(field.get(object)));
+            }
+            whereClause=whereClause.substring(0,whereClause.length()-3);
+            affectCount=this.sqLiteDatabase.delete(tableName, whereClause, keyPropertyValues.toArray(new String[]{}));
+        }catch (IllegalAccessException e){
+           e.printStackTrace();
+        }finally {
+          return affectCount;
+        }
+
     }
 
     private void putValueIntoContentValues(ContentValues contentValues, String key, Object value) {

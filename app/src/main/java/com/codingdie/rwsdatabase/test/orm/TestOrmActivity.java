@@ -25,17 +25,17 @@ public class TestOrmActivity extends Activity {
                 .version(2)
                 .create();
         final ClassInfo classInfo = new ClassInfo();
-        classInfo.setClassName("100001");
-        classInfo.setClassId(100001);
+        classInfo.setClassName("名字100");
+        classInfo.setClassId(100);
         rwsDatabaseManager.execWriteOperator(new WriteOperator() {
             @Override
             public void exec(WritableConnection writableConnection) {
-                writableConnection.insertObject(classInfo);
-                writableConnection.insertObjectIntoTable(classInfo, "Class");
+                writableConnection.insert(classInfo);
                 ClassInfo classInfo100 = writableConnection.queryObject("select * from Class where classId=100", new String[]{}, ClassInfo.class);
-                ClassInfo classInfo400 = writableConnection.queryObject("select * from Class where classId=10000", new String[]{}, ClassInfo.class);
                 System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(classInfo100));
-                System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(classInfo400));
+                writableConnection.delete(classInfo);
+                classInfo100 = writableConnection.queryObject("select * from Class where classId=100", new String[]{}, ClassInfo.class);
+                System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(classInfo100));
 
             }
         });

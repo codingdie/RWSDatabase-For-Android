@@ -137,7 +137,7 @@ public class MultipleReadAndWrite extends Activity {
                                 write2.setText("正在插入:"+now);
                             }
                         });
-                        writableSQLiteConnection.execSQL("insertObject into Student(`studentName`,`studentId`) values (?,?)", new Object[]{now, now});
+                        writableSQLiteConnection.execSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{now, now});
 
                     }
                     writableSQLiteConnection.setTransactionSuccessful();
@@ -203,7 +203,7 @@ public class MultipleReadAndWrite extends Activity {
                                write1.setText("正在插入:"+now);
                              }
                          });
-                        writableSQLiteConnection.execWriteSQL("insertObject into Student(`studentName`,`studentId`) values (?,?)", new Object[]{now, now});
+                        writableSQLiteConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{now, now});
 
                     }
 

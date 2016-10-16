@@ -3,7 +3,7 @@ package com.codingdie.rwsdatabase;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.codingdie.rwsdatabase.exception.RWSDatabaseInitException;
-import com.codingdie.rwsdatabase.version.imp.UpgradeDatabaseListener;
+import com.codingdie.rwsdatabase.version.proxy.UpgradeDatabaseListener;
 
 import java.io.File;
 
