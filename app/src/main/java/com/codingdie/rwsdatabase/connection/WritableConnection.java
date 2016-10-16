@@ -9,6 +9,7 @@ import com.codingdie.rwsdatabase.orm.cache.RWSClassInfoCache;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSClassInfo;
 import com.codingdie.rwsdatabase.orm.cache.model.RWSPropertyInfo;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class WritableConnection extends ReadableConnection {
     }
 
     @Deprecated
-    public long insert(String table, String nullColumnHack, ContentValues values)
+    public long insertObject(String table, String nullColumnHack, ContentValues values)
             throws SQLException {
         return this.sqLiteDatabase.insertOrThrow(table, nullColumnHack, values);
     }
@@ -41,31 +42,38 @@ public class WritableConnection extends ReadableConnection {
         return this.sqLiteDatabase.delete(table, whereClause, whereArgs);
     }
 
-    public <T> void insertObjectIntoTable(T object ,String tableName)   {
+    public <T> void insertObjectIntoTable(T object , String tableName)   {
         if(RWSObjectUtil.checkKeyPropertyIsNull(object)){
             throw  new RWSOrmException(RWSOrmException.KEY_PROPERTY_IS_NULL);
         }
         try {
-            RWSTable rwsTable=  RWSTableCache.getInstance().getRWSClassInfo(tableName,this);
+            RWSTableInfo rwsTableInfo =  RWSTableCache.getInstance().getRWSClassInfo(tableName,this);
             RWSClassInfo rwsClassInfo= RWSClassInfoCache.getInstance().getRWSClassInfo(object.getClass());
             String comlumStr="";
             String placeholderStr="";
             List<Object> values=new ArrayList();
-            for(RWSColum colum :rwsTable.getColums()){
+            for(RWSColumInfo colum : rwsTableInfo.getColums()){
+                comlumStr+=colum.getName()+",";
+                placeholderStr+="?,";
+                boolean valueFlag=false;
                 for(RWSPropertyInfo rwsPropertyInfo: rwsClassInfo.getProperties()){
                     if(rwsPropertyInfo.getAlias().contains(colum.getName())){
-                        values.add(rwsPropertyInfo.getField().get(object));
+                        Field field = rwsPropertyInfo.getField();
+                        field.setAccessible(true);
+                        values.add(field.get(object));
+                        valueFlag=true;
                         break;
                     }
                 }
-                comlumStr+=colum.getName()+",";
-                placeholderStr+="?,";
+                if(valueFlag==false){
+                    values.add(null);
+                }
             }
             if(comlumStr.length()>0){
-                comlumStr.substring(0,comlumStr.length()-1);
-                placeholderStr.substring(0,placeholderStr.length()-1);
+                comlumStr= comlumStr.substring(0,comlumStr.length()-1);
+                placeholderStr= placeholderStr.substring(0,placeholderStr.length()-1);
             }
-            this.sqLiteDatabase.execSQL("insert into "+tableName+" ("+comlumStr+") values ("+placeholderStr+")",values.toArray());
+            this.sqLiteDatabase.execSQL("insertObject into "+tableName+" ("+comlumStr+") values ("+placeholderStr+")",values.toArray());
         }catch (IllegalAccessException ex){
             ex.printStackTrace();
         }

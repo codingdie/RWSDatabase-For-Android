@@ -1,11 +1,16 @@
 package com.codingdie.rwsdatabase.test.orm;
 
+import com.codingdie.rwsdatabase.orm.annotation.RWSColum;
+import com.codingdie.rwsdatabase.orm.annotation.RWSTable;
+
 import java.util.List;
 
 /**
  * Created by xupen on 2016/10/12.
  */
+@RWSTable(name = "Class")
 public class ClassInfo {
+    @RWSColum(isKey = true)
     private  int classId;
     private  String className;
     private List<Student> students;

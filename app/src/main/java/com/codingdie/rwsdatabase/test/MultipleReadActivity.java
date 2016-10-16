@@ -96,8 +96,8 @@ public class MultipleReadActivity extends Activity {
                      writableConnection.beginTransaction();
 
                      for(int i=0;i<Integer.valueOf( dbSize.getText().toString());i++){
-                         sqLiteDatabase.execSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
-                         writableConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+                         sqLiteDatabase.execSQL("insertObject into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+                         writableConnection.execWriteSQL("insertObject into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
                      }
                      sqLiteDatabase.setTransactionSuccessful();
                      writableConnection.setTransactionSuccessful();

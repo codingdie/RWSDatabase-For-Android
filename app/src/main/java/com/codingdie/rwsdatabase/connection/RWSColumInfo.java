@@ -4,14 +4,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.List;
 
 /**
  * Created by xupen on 2016/8/22.
  */
-class RWSTable {
+public class RWSColumInfo {
     private  String name;
-    private List<RWSColum> colums;
+    private  String type;
+    private  boolean nullable;
 
     public String getName() {
         return name;
@@ -21,11 +21,19 @@ class RWSTable {
         this.name = name;
     }
 
-    public List<RWSColum> getColums() {
-        return colums;
+    public String getType() {
+        return type;
     }
 
-    public void setColums(List<RWSColum> colums) {
-        this.colums = colums;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    public void setNullable(boolean nullable) {
+        this.nullable = nullable;
     }
 }

@@ -5,7 +5,7 @@ import android.util.LruCache;
 /**
  * Created by xupen on 2016/9/28.
  */
-public class RWSTableCache extends  LruCache<String,RWSTable>{
+public class RWSTableCache extends  LruCache<String,RWSTableInfo>{
     private  static RWSTableCache instance;
     public static int maxCacheCount=100;
 
@@ -21,13 +21,13 @@ public class RWSTableCache extends  LruCache<String,RWSTable>{
     }
 
 
-    public RWSTable getRWSClassInfo(String tableName,ReadableConnection readableConnection){
-        RWSTable rwsTable = get(tableName);
-        if(rwsTable ==null){
-            rwsTable = readableConnection.getTableInfo(tableName);
-            put(tableName, rwsTable);
+    public RWSTableInfo getRWSClassInfo(String tableName, ReadableConnection readableConnection){
+        RWSTableInfo rwsTableInfo = get(tableName);
+        if(rwsTableInfo ==null){
+            rwsTableInfo = readableConnection.getTableInfo(tableName);
+            put(tableName, rwsTableInfo);
         }
-        return rwsTable;
+        return rwsTableInfo;
     }
 
 }

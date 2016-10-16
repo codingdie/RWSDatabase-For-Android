@@ -79,7 +79,11 @@ public class RWSDatabaseManager {
                 WritableConnection writableConnection=null;
                 try {
                     writableConnection =  connectionPoolManager.getWritableConnection();
+                    writableConnection.beginTransaction();
                     writeOperator.exec(writableConnection);
+                    writableConnection.setTransactionSuccessful();
+                    writableConnection.endTransaction();
+
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }finally {
