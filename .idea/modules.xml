@@ -3,7 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/RWSDatabase-For-Android.iml" filepath="$PROJECT_DIR$/.idea/modules/RWSDatabase-For-Android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/demo/demo.iml" filepath="$PROJECT_DIR$/.idea/modules/demo/demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rwsdatabase/rwsdatabase.iml" filepath="$PROJECT_DIR$/.idea/modules/rwsdatabase/rwsdatabase.iml" />
     </modules>
   </component>
 </project>
