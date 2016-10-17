@@ -6,3 +6,7 @@
 .DS_Store
 /build
 /captures
+.idea/modules/
+demo/src/main/res/drawable/
+rwsdatabase/libs/
+rwsdatabase/src/main/res/drawable/
