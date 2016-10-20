@@ -64,21 +64,21 @@ public class RWSClassInfo {
     }
 
     public static RWSClassInfo newInstance(Class aClass){
-        RWSClassInfo RWSClassInfo =new RWSClassInfo();
-        RWSClassInfo.setProperties(RWSObjectUtil.getAllProperty(aClass));
-        for(int i = 0; i< RWSClassInfo.getProperties().size(); i++){
-            if(RWSClassInfo.getProperties().get(i).isKey()){
-                RWSClassInfo.getKeyPropertyIndexes().add(i);
+        RWSClassInfo rwsClassInfo =new RWSClassInfo();
+        rwsClassInfo.setProperties(RWSObjectUtil.getAllProperty(aClass));
+        for(int i = 0; i< rwsClassInfo.getProperties().size(); i++){
+            if(rwsClassInfo.getProperties().get(i).isKey()){
+                rwsClassInfo.getKeyPropertyIndexes().add(i);
             }
         }
-        RWSTable RWSTable =  (com.codingdie.rwsdatabase.orm.annotation.RWSTable) aClass.getAnnotation(com.codingdie.rwsdatabase.orm.annotation.RWSTable.class);
-        if(RWSTable !=null){
-            String tableName= RWSTable.name();
+        RWSTable rwsTable =  (com.codingdie.rwsdatabase.orm.annotation.RWSTable) aClass.getAnnotation(com.codingdie.rwsdatabase.orm.annotation.RWSTable.class);
+        if(rwsTable !=null){
+            String tableName= rwsTable.name();
             if(!TextUtils.isEmpty(tableName)){
-                RWSClassInfo.setTableName(tableName);
+                rwsClassInfo.setTableName(tableName);
             }
         }
-        return RWSClassInfo;
+        return rwsClassInfo;
     }
 
     public String getTableName() {
