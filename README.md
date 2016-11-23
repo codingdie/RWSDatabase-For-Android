@@ -36,7 +36,7 @@ gradle引入(待做)
 1,create or upgrade the database  and get the databasemanager  
 创建或者升级数据库, 获取数据库管理对象
   ```
-  RwsDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this)      //context
+  RWSDatabaseManager rwsDatabaseManager = new RWSDatabaseCreator( MultipleReadActivity.this)      //context
                                                         .databaseName("test1")                      //dbname
                                                         .versionManager(VersionManager.class)       //versionmanager 版本管理器
                                                         .version(2)                                  //version 版本
@@ -74,49 +74,67 @@ public class VersionManager {
   
  ```  
  2 simply query and write  with orm
- sql查询写入(非orm)
+ ORM查询写入
  ``` 
-  //read/query
-  ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
-  Cursor cursor = readableConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
-  cursor.moveToNext();
-  final long sum=cursor.getInt(0);
-  cursor.close();
-  rwsDatabaseManager.releaseReadableDatabase(readableConnection); 
-     
-  //write
-  WritableConnection writableConnection=rwsDatabaseManager.getWritableConnection();
-  writableConnection.beginTransaction();//开始事务
-       
-  writableConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
+  假设有张数据表Student(studentId,studentName)对应下面这个类
+  @RWSTable(name = "Student") 注解表示这个类属于哪张表
+  public class Student {
 
-  writableConnection.setTransactionSuccessful();
-  writableConnection.endTransaction();;//结束事务
-  rwsDatabaseManager.releaseWritableConnection();
+    @RWSColum(isKey = true)  //注解表示这个字段对应数据主键
+    private  int studentId;
+    private  String studentName;
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+}
+Student student
+插入：
+        rwsDatabaseManager.execWriteOperator(new WriteOperator() {
+            @Override
+            public void exec(WritableConnection writableConnection) {
+                writableConnection.insert(student);
+            }
+        });
+更新
+    rwsDatabaseManager.execWriteOperator(new WriteOperator() {
+            @Override
+            public void exec(WritableConnection writableConnection) {
+                writableConnection.update(student);
+            }
+        });
+查询单个Student
+     Student student = rwsDatabaseManager.execReadOperator(new ReadOperator<Student>() {
+            @Override
+            public Student exec(ReadableConnection readableConnection) {
+                return readableConnection.queryObject("select * from Student where studentId=20", new String[]{}, Student.class);
+            }
+        });
+查询列表Student
+  List<Student> students= rwsDatabaseManager.execReadOperator(new ReadOperator<List<Student>>() {
+            @Override
+            public List<Student> exec(ReadableConnection readableConnection) {
+                return readableConnection.queryObjectList("select * from Student", new String[]{}, Student.class);
+            }
+        });
  ```
+以上为简单用法,但实际框架非常灵活强大,支持以下特性:
+1,不需要提前建立关系就支持级联查询一对（多个）多,比如查询一个班级信息连带所有的学生信息和所有老师信息
+2,默认映射规则是数据库字段名对应对象名，但用注解支持多个别名机制(@RWSColum(isKey = true,alias = {"id","keyId"}))
+3,渐进式版本管理是基础功能,在此基础上提供从任意配置版本开始的渐进式版本管理，提高效能
+4,读写完全分离,如果一个线程在写入，这个时候另外一个线程准备查询,普通的数据库框架是不能并发(可以自己测试),而我这个完全互不相印象。理论基础是wal模式和多连接(2个链接可以做到读写并发)
+5,后期准备支持内存二级缓存和基于注解的自动化分表
 
  
- ```  
- 
- 
- 3 simply query and write  with sql(no orm)  
- sql查询写入(非orm)
- ``` 
-  //read/query
-  ReadableConnection readableConnection = rwsDatabaseManager.getReadableDatabase();
-  Cursor cursor = readableConnection.execReadSQL("select sum(studentId)  from Student ", new String[]{});
-  cursor.moveToNext();
-  final long sum=cursor.getInt(0);
-  cursor.close();
-  rwsDatabaseManager.releaseReadableDatabase(readableConnection); 
-     
-  //write
-  WritableConnection writableConnection=rwsDatabaseManager.getWritableConnection();
-  writableConnection.beginTransaction();//开始事务
-       
-  writableConnection.execWriteSQL("insert into Student(`studentName`,`studentId`) values (?,?)", new Object[]{i, i});
-
-  writableConnection.setTransactionSuccessful();
-  writableConnection.endTransaction();;//结束事务
-  rwsDatabaseManager.releaseWritableConnection();
- ```
